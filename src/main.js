@@ -2,7 +2,8 @@ import "babel-polyfill"
 // dom
 var $grid = document.getElementById("grid")
 var $play = document.getElementById("play")
-var $stop = document.getElementById("stop")
+var $step = document.getElementById("step")
+var $park = document.getElementById("park")
 var $slider = document.getElementById("slider")
 var $colors = document.getElementById("colors")
 var $storage = document.getElementById("storage")
@@ -22,8 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
         dispatch({
             type: DRAW,
             payload: {
-                x: Math.round(e.offsetX / resolution),
-                y: Math.round(e.offsetY / resolution),
+                x: Math.floor(e.offsetX / resolution),
+                y: Math.floor(e.offsetY / resolution),
             },
         })
     })
@@ -32,8 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
         dispatch({type: PLAY})
     })
 
-    $stop.addEventListener("click", () => {
-        dispatch({type: STOP})
+    $step.addEventListener("click", () => {
+        dispatch({type: STEP})
+    })
+
+    $park.addEventListener("click", () => {
+        dispatch({type: PARK})
     })
 
     $slider.addEventListener("input", (e) => {
@@ -92,7 +97,8 @@ var frameRateMs = 1000 / 12
 // actions
 var TICK = "TICK"
 var PLAY = "PLAY"
-var STOP = "STOP"
+var STEP = "STEP"
+var PARK = "PARK"
 var DRAW = "DRAW"
 var SEEK = "SEEK"
 var SET_COLOR = "SET_COLOR"
@@ -104,7 +110,7 @@ var initState = {
     step: 0,
   // stored as `${x}-${y}`: { x, y, step }
     pixels: {},
-    playing: false,
+    mode: STEP,
     color: "black",
 }
 var _state = initState
@@ -114,21 +120,29 @@ var actionLog = []
 function reducer (state, action) {
     switch (action.type) {
     case TICK:
-        return state.playing ? {...state, step: nextStep(state.step)} : state
+        return {...state, step: nextStep(state.step)}
     case PLAY:
-        return state.playing ? state : {...state, playing: true}
-    case STOP:
-        return state.playing ? {...state, playing: false} : state
+    case STEP:
+    case PARK:
+        return state.mode === action.type
+            ? state
+            : { ...state, mode: action.type }
     case DRAW:
         return {
             ...state,
             pixels: {...state.pixels, ...nextPixel(state, action.payload)},
-            step: state.playing ? state.step : nextStep(state.step),
+            step: state.mode === STEP
+                ? nextStep(state.step)
+                : state.step,
         }
     case SEEK:
-        return {...state, step: action.payload, playing: false}
+        return {
+            ...state,
+            step: action.payload,
+            mode: state.mode === PLAY ? STEP : state.mode,
+        }
     case SET_COLOR:
-        return {...state, color: action.payload}
+        return { ...state, color: action.payload }
     case LOAD:
         return { ...initState, pixels: action.payload }
     case RESET:
@@ -144,16 +158,16 @@ function render (state) {
     ctx.clearRect(0, 0, width * resolution, height * resolution)
     for (var key in state.pixels) {
         let px = state.pixels[key]
-        if (px.step < state.step && // made before current step
+        if (px.step <= state.step && // made before current step
             px.step + ttl > state.step) { // not older than ttl
             ctx.fillStyle = px.color
             ctx.fillRect(
-                (px.x + 1) * resolution, (px.y + 1) * resolution,
+                1 + px.x * resolution, 1 + px.y * resolution,
                 resolution - 2, resolution - 2)
         }
     }
     $slider.value = state.step
-    if (state.playing) {
+    if (state.mode === PLAY) {
         window.setTimeout(nextTick, frameRateMs)
     }
 }
