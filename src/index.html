@@ -6,6 +6,7 @@
 	<style media="screen">
 		#grid {
 			border: 1px solid black;
+            cursor: crosshair;
 		}
 
 		.wrap {
@@ -22,7 +23,7 @@
 <body>
 	<div class="wrap">
 	  <div class="grid-group">
-	    <canvas id="grid" width="256" height="256" />
+	    <canvas id="grid" width="384" height="384" />
 	  </div>
 	  <div class="control-group">
 	    <div>
@@ -30,7 +31,7 @@
 	      <button id="stop">Stop</button>
 	    </div>
 	    <div>
-	      <input type="range" id="slider" min="0" max="128" value="0"/>
+	      <input type="range" id="slider" min="0" max="64" value="0"/>
 	    </div>
         <div>
             <select id="colors">

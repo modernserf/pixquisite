@@ -81,12 +81,13 @@ function load (text) {
 }
 
 // constants
-var ttl = 64
+var ttl = 32
 var width = 32
 var height = 32
-var maxSteps = 128
-var resolution = 8 // CSS px per grid px
+var maxSteps = 64
+var resolution = 12 // CSS px per grid px
 var localStorageKey = "pixquisite-v1"
+var frameRateMs = 1000 / 12
 
 // actions
 var TICK = "TICK"
@@ -146,12 +147,14 @@ function render (state) {
         if (px.step < state.step && // made before current step
             px.step + ttl > state.step) { // not older than ttl
             ctx.fillStyle = px.color
-            ctx.fillRect(px.x * resolution, px.y * resolution, resolution, resolution)
+            ctx.fillRect(
+                (px.x + 1) * resolution, (px.y + 1) * resolution,
+                resolution - 2, resolution - 2)
         }
     }
     $slider.value = state.step
     if (state.playing) {
-        window.requestAnimationFrame(nextTick)
+        window.setTimeout(nextTick, frameRateMs)
     }
 }
 
