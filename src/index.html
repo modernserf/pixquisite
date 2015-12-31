@@ -11,6 +11,9 @@
 		.wrap {
 			display: flex;
 		}
+        textarea {
+            display: block;
+        }
 	</style>
 {% if (o.htmlWebpackPlugin.options.env === '"development"'){ %}
     <script src="http://localhost:8088/webpack-dev-server.js"></script>
@@ -38,6 +41,13 @@
                 <option>yellow</option>
                 <option>white</option>
             </select>
+        </div>
+        <div>
+            <h3>LOL load/save</h3>
+            <textarea id="storage"></textarea>
+            <button type="button" id="load">Load</button>
+            <button type="button" id="save">Save</button>
+            <button type="button" id="clear">Clear</button>
         </div>
 	  </div>
 	</div>
