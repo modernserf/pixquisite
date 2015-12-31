@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $play.addEventListener("click", () => {
         dispatch({type: PLAY})
+        tick()
     })
 
     $step.addEventListener("click", () => {
@@ -82,6 +83,13 @@ function load (text) {
         dispatch({type: LOAD, payload: state})
     } catch (e) {
         window.alert("Invalid saved state.")
+    }
+}
+
+function tick () {
+    if (_state.mode === PLAY) {
+        dispatch({ type: TICK })
+        window.setTimeout(tick, frameRateMs)
     }
 }
 
@@ -167,12 +175,7 @@ function render (state) {
         }
     }
     $slider.value = state.step
-    if (state.mode === PLAY) {
-        window.setTimeout(nextTick, frameRateMs)
-    }
 }
-
-function nextTick () { dispatch({ type: TICK }) }
 
 function dispatch (action) {
     actionLog.push(action)
