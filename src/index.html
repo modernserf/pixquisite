@@ -12,6 +12,9 @@
 			display: flex;
 		}
 	</style>
+{% if (o.htmlWebpackPlugin.options.env === '"development"'){ %}
+    <script src="http://localhost:8088/webpack-dev-server.js"></script>
+{% } %}
 </head>
 <body>
 	<div class="wrap">
@@ -26,6 +29,16 @@
 	    <div>
 	      <input type="range" id="slider" min="0" max="128" value="0"/>
 	    </div>
+        <div>
+            <select id="colors">
+                <option>black</option>
+                <option>red</option>
+                <option>blue</option>
+                <option>green</option>
+                <option>yellow</option>
+                <option>white</option>
+            </select>
+        </div>
 	  </div>
 	</div>
 </body>

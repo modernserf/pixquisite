@@ -4,6 +4,7 @@ var $grid = document.getElementById("grid")
 var $play = document.getElementById("play")
 var $stop = document.getElementById("stop")
 var $slider = document.getElementById("slider")
+var $colors = document.getElementById("colors")
 
 document.addEventListener("DOMContentLoaded", () => {
     $grid.addEventListener("mousedown", (e) => {
@@ -30,6 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
             payload: Number(e.target.value),
         })
     })
+
+    $colors.addEventListener("change", (e) => {
+        dispatch({
+            type: SET_COLOR,
+            payload: e.target.value,
+        })
+    })
 })
 
 // constants
@@ -46,6 +54,7 @@ var PLAY = "PLAY"
 var STOP = "STOP"
 var DRAW = "DRAW"
 var SEEK = "SEEK"
+var SET_COLOR = "SET_COLOR"
 
 // state
 var _state = {
@@ -74,6 +83,8 @@ function reducer (state, action) {
         }
     case SEEK:
         return {...state, step: action.payload, playing: false}
+    case SET_COLOR:
+        return {...state, color: action.payload}
     }
     return state
 }

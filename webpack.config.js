@@ -37,6 +37,7 @@ module.exports = {
             title: "Pixquisite Corpse",
             template: "src/index.html",
             inject: "body",
+            env: JSON.stringify(process.env.NODE_ENV || "development"),
         }),
     ],
     resolve: {
