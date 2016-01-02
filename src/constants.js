@@ -1,5 +1,5 @@
 // constants
-export const ttl = 8
+export const ttl = 16
 export const width = 32
 export const height = 32
 export const maxSteps = 32

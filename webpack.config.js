@@ -14,8 +14,12 @@ var envPlugin = new webpack.DefinePlugin({
 
 var cssConfig = "css?localIdentName=[path][name]---[local]---[hash:base64:5]"
 
+var entry = envStr === `"development"`
+     ? ["webpack/hot/dev-server", "./src/main.js"]
+     : "./src/main.js"
+
 module.exports = {
-    entry: ["webpack/hot/dev-server", "./src/main.js"],
+    entry: entry,
     output: {
         filename: "main.js",
         path: process.cwd() + "/dist",

@@ -88,6 +88,13 @@ function Controls ({step, storage}) {
     )
 }
 
+const mod = (a, b) => ((a % b) + b) % b
+
+function showStep (it, now) {
+    const p = mod(now - it, maxSteps)
+    return p >= 0 && ttl > p
+}
+
 const Grid = connect((state) => state, { draw })(
 class Grid extends React.Component {
     constructor () {
@@ -106,8 +113,7 @@ class Grid extends React.Component {
         ctx.clearRect(0, 0, width * resolution, height * resolution)
         for (var key in pixels) {
             let px = pixels[key]
-            if (px.step <= step && // made before current step
-                px.step + ttl > step) { // not older than ttl
+            if (showStep(px.step, step)) {
                 ctx.fillStyle = px.color
                 // draw with 1px padding
                 ctx.fillRect(
