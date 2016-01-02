@@ -8,4 +8,4 @@ Animated Pixel Art Exquisite Corpse
 - design
 - use React for controls
 - better shared storage
-- the actual "exquisite corpse" part -- share with another user & they get your last `n` frames, at end of game play sequence of snippets
+- the actual "exquisite corpse" part -- share with another user & they get your last frame, at end of game play sequence of snippets
