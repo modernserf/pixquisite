@@ -3,10 +3,12 @@ var webpack = require("webpack")
 var autoprefixer = require("autoprefixer")
 var HtmlPlugin = require("html-webpack-plugin")
 
+var envStr = JSON.stringify(process.env.NODE_ENV || "development")
+
 // definePlugin takes raw strings and inserts them, so you can put strings of JS if you want.
 var envPlugin = new webpack.DefinePlugin({
     "process.env": {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
+        NODE_ENV: envStr,
     },
 })
 
@@ -17,7 +19,7 @@ module.exports = {
     output: {
         filename: "main.js",
         path: process.cwd() + "/dist",
-        publicPath: "/",
+        publicPath: "",
     },
     module: {
         loaders: [
@@ -37,7 +39,8 @@ module.exports = {
             title: "Pixquisite Corpse",
             template: "src/index.html",
             inject: "body",
-            env: JSON.stringify(process.env.NODE_ENV || "development"),
+            env: envStr,
+            hash: true,
         }),
     ],
     resolve: {
