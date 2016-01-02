@@ -1,0 +1,11 @@
+canvas {
+    border: 1px solid black;
+    cursor: crosshair;
+}
+
+.wrap {
+    display: flex;
+}
+textarea {
+    display: block;
+}

@@ -1,6 +1,6 @@
 import {
     frameRateMs, localStorageKey,
-    RESET, LOAD, PLAY, TICK,
+    LOAD, SAVE, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
 } from "constants"
 
 // action creators
@@ -16,16 +16,32 @@ export const load = (text) => (dispatch) => {
     }
 }
 
-export const tick = () => (dispatch, getState) => {
+const tick = () => (dispatch, getState) => {
     if (getState().mode === PLAY) {
         dispatch({ type: TICK })
         window.setTimeout(() => dispatch(tick()), frameRateMs)
     }
 }
 
-// TODO: $storage.value should be handled in render()
-export const save = ($storage) => (dispatch, getState) => {
+export const save = () => (dispatch, getState) => {
     var stateJSON = JSON.stringify(getState().pixels)
     window.localStorage.setItem(localStorageKey, stateJSON)
-    $storage.value = stateJSON
+    dispatch({ type: SAVE })
 }
+
+export const play = () => (dispatch) => {
+    dispatch({type: PLAY})
+    dispatch(tick())
+}
+
+export const reset = () => {
+    window.localStorage.removeItem(localStorageKey)
+    return {type: RESET}
+}
+
+// TODO: debounce or something? if (payload ~= last payload) return
+export const draw = (payload) => ({ type: DRAW, payload })
+
+export const step = () => ({ type: STEP })
+export const seek = (payload) => ({ type: SEEK, payload })
+export const setColor = (payload) => ({ type: SET_COLOR, payload })

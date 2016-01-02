@@ -1,6 +1,6 @@
 import {
     maxSteps,
-    TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, LOAD, RESET,
+    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE,
 } from "constants"
 
 // state
@@ -10,6 +10,7 @@ const initState = {
     pixels: {},
     mode: STEP,
     color: "black",
+    saveState: "",
 }
 
 export function reducer (state = initState, action) {
@@ -18,7 +19,6 @@ export function reducer (state = initState, action) {
         return {...state, step: nextStep(state.step)}
     case PLAY:
     case STEP:
-    case PARK:
         return state.mode === action.type
             ? state
             : { ...state, mode: action.type }
@@ -39,9 +39,15 @@ export function reducer (state = initState, action) {
     case SET_COLOR:
         return { ...state, color: action.payload }
     case LOAD:
-        return { ...initState, pixels: action.payload }
+        return {
+            ...initState,
+            pixels: action.payload,
+            saveState: JSON.stringify(action.payload),
+        }
     case RESET:
         return initState
+    case SAVE:
+        return { ...state, saveState: JSON.stringify(state.pixels) }
     }
     return state
 }

@@ -1,8 +1,16 @@
 {
+  "parser": "babel-eslint",
   "extends": "standard",
+  "plugins": [
+    "react"
+  ],
+  "ecmaFeatures": {
+      "jsx": true
+  },
   "rules": {
     "quotes":[2, "double"],
     "comma-dangle":[2,"always-multiline"],
     "indent":[2,4],
+    "react/jsx-uses-react":[2],
   }
 }

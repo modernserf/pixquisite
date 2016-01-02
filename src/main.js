@@ -1,26 +1,29 @@
 import "babel-polyfill"
+import React from "react"
+import DOM from "react-dom"
+import { createStore, applyMiddleware } from "redux"
+import { Provider } from "react-redux"
+import thunk from "redux-thunk"
+
+import { localStorageKey } from "constants"
+import { load } from "actions"
 import { reducer } from "store"
-import { mount, render } from "view"
+import { Main } from "view"
+
+const store = applyMiddleware(
+    thunk
+)(createStore)(reducer)
+
+// hydrate state
+var savedData = window.localStorage.getItem(localStorageKey)
+if (savedData) {
+    store.dispatch(load(savedData))
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-    var _state = reducer(undefined, {type: "__INIT"})
-    // var actionLog = []
-
-    const ref = {}
-
-    const dispatch = (action) => {
-        if (typeof action === "function") {
-            action(dispatch, () => _state)
-            return
-        }
-        var nextState = reducer(_state, action)
-        // actionLog.push(action)
-        if (nextState === _state) { return }
-        if (ref.dom) {
-            render(nextState, ref.dom)
-        }
-        _state = nextState
-    }
-
-    ref.dom = mount(dispatch)
+    DOM.render(
+        <Provider store={store}>
+            <Main/>
+        </Provider>,
+    document.getElementById("app"))
 })
