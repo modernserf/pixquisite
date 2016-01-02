@@ -1,12 +1,12 @@
 import {
-    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, PATCH,
+    TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, PATCH,
 } from "constants"
 
 // state
 const initState = {
     step: 0,
   // stored as `${x}-${y}`: { x, y, step }
-    pixels: {},
+    pixels: [],
     mode: STEP,
     color: "black",
     saveState: "",
@@ -16,7 +16,6 @@ const initState = {
     maxSteps: 32,
     resolution: 12, // css px per cell
     frameRate: 12,
-
 }
 
 export function reducer (state = initState, {type, payload}) {
@@ -27,13 +26,17 @@ export function reducer (state = initState, {type, payload}) {
         return {...state, step: nextStep(state)}
     case PLAY:
     case STEP:
+    case PARK:
         return state.mode === type
             ? state
             : { ...state, mode: type }
     case DRAW:
         return {
             ...state,
-            pixels: {...state.pixels, ...nextPixel(state, payload)},
+            pixels: [
+                ...state.pixels,
+                {...payload, step: state.step, color: state.color},
+            ],
             step: state.mode === STEP
                 ? nextStep(state)
                 : state.step,
@@ -62,14 +65,4 @@ export function reducer (state = initState, {type, payload}) {
 
 function nextStep ({step, maxSteps}) {
     return (step + 1) % maxSteps
-}
-
-function nextPixel (state, pixel) {
-    return {
-        [`${pixel.x}-${pixel.y}`]: {
-            ...pixel,
-            color: state.color,
-            step: state.step,
-        },
-    }
 }

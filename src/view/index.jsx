@@ -3,8 +3,9 @@ import "./style.css"
 import React from "react"
 import { connect } from "react-redux"
 
+import { PLAY, STEP, PARK } from "constants"
 import {
-    load, save, reset, play, step, seek, setColor, draw, patch,
+    load, save, reset, play, step, park, seek, setColor, draw, patch,
 } from "actions"
 
 export function Main () {
@@ -16,12 +17,20 @@ export function Main () {
     )
 }
 
-const Transport = connect(({mode}) => ({ mode }), { play, step })(
-function Transport ({mode, play, step}) {
+const Transport = connect(({mode}) => ({ mode }), { play, step, park })(
+function Transport ({mode, play, step, park}) {
+    const active = (m) => m === mode ? {
+        border: "4px solid black",
+    } : {}
+
     return (
         <div>
-            <button onClick={play}>Play</button>
-            <button onClick={step}>Step</button>
+            <button style={active(PLAY)}
+                onClick={play}>Play</button>
+            <button style={active(STEP)}
+                onClick={step}>Step</button>
+            <button style={active(PARK)}
+                onClick={park}>Park</button>
         </div>
     )
 })
@@ -40,7 +49,7 @@ function Scrubber ({maxSteps, step, seek}) {
     )
 })
 
-const colors = ["black", "white", "red", "blue", "green", "yellow"]
+const colors = ["black", "white", "red", "blue", "green", "orange", "purple"]
 
 const Palette = connect((s) => s, { setColor })(
 function Palette ({color, setColor}) {
@@ -126,8 +135,8 @@ class Grid extends React.Component {
     drawCanvas ({pixels, step, width, height, resolution, maxSteps, ttl}) {
         const ctx = this._ctx
         ctx.clearRect(0, 0, width * resolution, height * resolution)
-        for (var key in pixels) {
-            const px = pixels[key]
+        for (var i = 0, ln = pixels.length; i < ln; i++) {
+            const px = pixels[i]
             const p = mod(step - px.step, maxSteps)
             const showStep = p >= 0 && ttl > p
 

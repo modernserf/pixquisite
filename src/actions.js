@@ -1,6 +1,6 @@
 import {
     localStorageKey,
-    PATCH, LOAD, SAVE, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
+    PATCH, LOAD, SAVE, TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, RESET,
 } from "constants"
 
 export const patch = (payload) => ({ type: PATCH, payload })
@@ -50,6 +50,7 @@ export const draw = (payload) => (dispatch) => {
 }
 
 export const step = () => ({ type: STEP })
+export const park = () => ({ type: PARK })
 export const seek = (payload) => ({ type: SEEK, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
 

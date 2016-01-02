@@ -1,5 +1,5 @@
 // constants
-export const localStorageKey = "pixquisite-v1"
+export const localStorageKey = "pixquisite-v2"
 
 // actions
 export const TICK = "TICK"
