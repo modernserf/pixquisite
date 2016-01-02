@@ -12,7 +12,7 @@ export const load = (text) => (dispatch) => {
         var state = JSON.parse(text)
         dispatch({type: LOAD, payload: state})
     } catch (e) {
-        window.alert("Invalid saved state.")
+        console.error("invalid save state.")
     }
 }
 
@@ -29,7 +29,8 @@ export const save = () => (dispatch, getState) => {
     dispatch({ type: SAVE })
 }
 
-export const play = () => (dispatch) => {
+export const play = () => (dispatch, getState) => {
+    if (getState().mode === PLAY) { return }
     dispatch({type: PLAY})
     dispatch(tick())
 }

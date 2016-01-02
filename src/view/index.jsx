@@ -69,8 +69,8 @@ function FileBrowser ({load, save, reset, saveState = ""}) {
     return (
         <div>
             <h3>LOL load/save</h3>
-            <textarea defaultValue={saveState}/>
-            <button onClick={load}>Load</button>
+            <textarea value={saveState}
+                onChange={(e) => load(e.target.value)}/>
             <button onClick={save}>Save</button>
             <button onClick={reset}>Reset</button>
         </div>
