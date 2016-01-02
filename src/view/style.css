@@ -3,9 +3,31 @@ canvas {
     cursor: crosshair;
 }
 
+.github-link {
+    display: none;
+}
+@media (min-width: 960px) {
+    .github-link {
+        display: block;
+    }
+}
+
 .wrap {
     display: flex;
+    flex-direction: column;
 }
+
+[type="range"] {
+    height: 48px;
+    font-size: 32px;
+    width: 400px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    height: 48px;
+    width: 48px;
+}
+
 textarea {
     display: block;
 }
@@ -19,4 +41,5 @@ button {
     border: 1px solid black;
     border-radius: 4px;
     background-color: white;
+    font-size: 28px;
 }

@@ -10,11 +10,11 @@ const initState = {
     mode: STEP,
     color: "black",
     saveState: "",
-    ttl: 16,
-    width: 32,
-    height: 32,
+    ttl: 8,
+    width: 16,
+    height: 16,
     maxSteps: 32,
-    resolution: 12, // css px per cell
+    resolution: 24, // css px per cell
     frameRate: 12,
 }
 

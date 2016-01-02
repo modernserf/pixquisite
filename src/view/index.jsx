@@ -57,8 +57,8 @@ function Palette ({color, setColor}) {
         <td key={c}
             style={{
                 backgroundColor: c,
-                padding: "0 5px",
-                border: c === color ? "1px solid black" : "none",
+                padding: "24px 24px",
+                border: c === color ? "4px solid black" : "none",
             }}
             onClick={() => setColor(c)}>
             &nbsp;</td>)
@@ -152,21 +152,31 @@ class Grid extends React.Component {
         }
     }
     onMouseDown (e) {
+        e.preventDefault()
         this.onDraw(e)
         this.setState({mousedown: true})
     }
-    onMouseEnd () {
+    onMouseEnd (e) {
+        e.preventDefault()
         this.setState({mousedown: false})
     }
     onMouseMove (e) {
+        e.preventDefault()
         if (!this.state.mousedown) { return }
         this.onDraw(e)
     }
     onDraw (e) {
         const { draw, resolution } = this.props
+
+        const event = e.nativeEvent.targetTouches
+            ? e.nativeEvent.targetTouches[0]
+            : e
+
+        const offset = 4
+
         draw({
-            x: Math.floor(e.nativeEvent.offsetX / resolution),
-            y: Math.floor(e.nativeEvent.offsetY / resolution),
+            x: Math.floor((event.clientX - offset) / resolution),
+            y: Math.floor((event.clientY - offset) / resolution),
         })
     }
     render () {
@@ -178,6 +188,10 @@ class Grid extends React.Component {
                     onMouseUp={(e) => this.onMouseEnd(e)}
                     onMouseOut={(e) => this.onMouseEnd(e)}
                     onMouseMove={(e) => this.onMouseMove(e)}
+                    onTouchStart={(e) => this.onMouseDown(e)}
+                    onTouchEnd={(e) => this.onMouseEnd(e)}
+                    onTouchMove={(e) => this.onMouseMove(e)}
+                    onTouchCancel={(e) => this.onMouseEnd(e)}
                     width={width * resolution}
                     height={height * resolution}/>
             </div>
