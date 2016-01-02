@@ -39,9 +39,21 @@ export const reset = () => {
     return {type: RESET}
 }
 
-// TODO: debounce or something? if (payload ~= last payload) return
-export const draw = (payload) => ({ type: DRAW, payload })
+let lastDraw = null
+export const draw = (payload) => (dispatch) => {
+    if (lastDraw && eq(lastDraw, payload)) { return }
+    lastDraw = payload
+    dispatch({ type: DRAW, payload })
+}
 
 export const step = () => ({ type: STEP })
 export const seek = (payload) => ({ type: SEEK, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
+
+function eq (a, b) {
+    if (a === b) { return true }
+    for (const key in a) {
+        if (a[key] !== b[key]) { return false }
+    }
+    return true
+}
