@@ -4,26 +4,19 @@ import React from "react"
 import { connect } from "react-redux"
 
 import {
-    ttl, width, height, resolution, maxSteps,
-} from "constants"
-import {
-    load, save, reset, play, step, seek, setColor, draw,
+    load, save, reset, play, step, seek, setColor, draw, patch,
 } from "actions"
 
-export const Main = connect((state) => state)(
-function Main ({step, storage = "", pixels}) {
+export function Main () {
     return (
         <div className="wrap">
-            <Grid width={width} height={height}
-                resolution={resolution}
-                step={step}
-                pixels={pixels}/>
-            <Controls step={step} storage={storage}/>
+            <Grid/>
+            <Controls/>
         </div>
     )
-})
+}
 
-const Transport = connect((s) => s, { play, step })(
+const Transport = connect(({mode}) => ({ mode }), { play, step })(
 function Transport ({mode, play, step}) {
     return (
         <div>
@@ -33,8 +26,10 @@ function Transport ({mode, play, step}) {
     )
 })
 
-const Scrubber = connect((state) => state, { seek })(
-function Scrubber ({step, seek}) {
+const Scrubber = connect(
+({maxSteps, step}) => ({maxSteps, step}),
+{ seek })(
+function Scrubber ({maxSteps, step, seek}) {
     return (
         <div>
             <input type="range"
@@ -77,23 +72,43 @@ function FileBrowser ({load, save, reset, saveState = ""}) {
     )
 })
 
-function Controls ({step, storage}) {
+function EnvValue ({id, state}) {
+    return (
+        <div>
+            <label>{id}</label>
+            <input type="number"
+                value={state[id]}
+                onChange={(e) => state.patch({
+                    [id]: Number(e.target.value),
+                })}/>
+        </div>
+    )
+}
+
+const Environment = connect((s) => s, { patch })(
+function Environment (state) {
+    const vals = ["ttl", "width", "height", "maxSteps", "resolution", "frameRate"]
+        .map((key) => <EnvValue key={key} id={key} state={state}/>)
+    return (
+        <div>
+            {vals}
+        </div>
+    )
+})
+
+function Controls () {
     return (
         <div className="control-group">
             <Transport/>
             <Scrubber/>
             <Palette/>
             <FileBrowser/>
+            <Environment/>
         </div>
     )
 }
 
 const mod = (a, b) => ((a % b) + b) % b
-
-function showStep (it, now) {
-    const p = mod(now - it, maxSteps)
-    return p >= 0 && ttl > p
-}
 
 const Grid = connect((state) => state, { draw })(
 class Grid extends React.Component {
@@ -108,12 +123,15 @@ class Grid extends React.Component {
     componentWillUpdate (nextProps) {
         this.drawCanvas(nextProps)
     }
-    drawCanvas ({pixels, step}) {
+    drawCanvas ({pixels, step, width, height, resolution, maxSteps, ttl}) {
         const ctx = this._ctx
         ctx.clearRect(0, 0, width * resolution, height * resolution)
         for (var key in pixels) {
-            let px = pixels[key]
-            if (showStep(px.step, step)) {
+            const px = pixels[key]
+            const p = mod(step - px.step, maxSteps)
+            const showStep = p >= 0 && ttl > p
+
+            if (showStep) {
                 ctx.fillStyle = px.color
                 // draw with 1px padding
                 ctx.fillRect(
@@ -136,7 +154,8 @@ class Grid extends React.Component {
         this.onDraw(e)
     }
     onDraw (e) {
-        this.props.draw({
+        const { draw, resolution } = this.props
+        draw({
             x: Math.floor(e.nativeEvent.offsetX / resolution),
             y: Math.floor(e.nativeEvent.offsetY / resolution),
         })

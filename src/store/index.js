@@ -1,6 +1,5 @@
 import {
-    maxSteps,
-    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE,
+    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, PATCH,
 } from "constants"
 
 // state
@@ -11,38 +10,47 @@ const initState = {
     mode: STEP,
     color: "black",
     saveState: "",
+    ttl: 16,
+    width: 32,
+    height: 32,
+    maxSteps: 32,
+    resolution: 12, // css px per cell
+    frameRate: 12,
+
 }
 
-export function reducer (state = initState, action) {
-    switch (action.type) {
+export function reducer (state = initState, {type, payload}) {
+    switch (type) {
+    case PATCH:
+        return { ...state, ...payload }
     case TICK:
-        return {...state, step: nextStep(state.step)}
+        return {...state, step: nextStep(state)}
     case PLAY:
     case STEP:
-        return state.mode === action.type
+        return state.mode === type
             ? state
-            : { ...state, mode: action.type }
+            : { ...state, mode: type }
     case DRAW:
         return {
             ...state,
-            pixels: {...state.pixels, ...nextPixel(state, action.payload)},
+            pixels: {...state.pixels, ...nextPixel(state, payload)},
             step: state.mode === STEP
-                ? nextStep(state.step)
+                ? nextStep(state)
                 : state.step,
         }
     case SEEK:
         return {
             ...state,
-            step: action.payload,
+            step: payload,
             mode: state.mode === PLAY ? STEP : state.mode,
         }
     case SET_COLOR:
-        return { ...state, color: action.payload }
+        return { ...state, color: payload }
     case LOAD:
         return {
             ...initState,
-            pixels: action.payload,
-            saveState: JSON.stringify(action.payload),
+            pixels: payload,
+            saveState: JSON.stringify(payload),
         }
     case RESET:
         return initState
@@ -52,7 +60,7 @@ export function reducer (state = initState, action) {
     return state
 }
 
-function nextStep (step) {
+function nextStep ({step, maxSteps}) {
     return (step + 1) % maxSteps
 }
 

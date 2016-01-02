@@ -1,9 +1,10 @@
 import {
-    frameRateMs, localStorageKey,
-    LOAD, SAVE, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
+    localStorageKey,
+    PATCH, LOAD, SAVE, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
 } from "constants"
 
-// action creators
+export const patch = (payload) => ({ type: PATCH, payload })
+
 export const load = (text) => (dispatch) => {
     if (!text) {
         dispatch({type: RESET})
@@ -17,9 +18,10 @@ export const load = (text) => (dispatch) => {
 }
 
 const tick = () => (dispatch, getState) => {
-    if (getState().mode === PLAY) {
+    const { mode, frameRate } = getState()
+    if (mode === PLAY) {
         dispatch({ type: TICK })
-        window.setTimeout(() => dispatch(tick()), frameRateMs)
+        window.setTimeout(() => dispatch(tick()), 1000 / frameRate)
     }
 }
 

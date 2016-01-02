@@ -1,11 +1,5 @@
 // constants
-export const ttl = 16
-export const width = 32
-export const height = 32
-export const maxSteps = 32
-export const resolution = 12 // CSS px per grid px
 export const localStorageKey = "pixquisite-v1"
-export const frameRateMs = 1000 / 12
 
 // actions
 export const TICK = "TICK"
@@ -18,3 +12,5 @@ export const SET_COLOR = "SET_COLOR"
 export const LOAD = "LOAD"
 export const RESET = "RESET"
 export const SAVE = "SAVE"
+
+export const PATCH = "PATCH"

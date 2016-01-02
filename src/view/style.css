@@ -9,3 +9,7 @@ canvas {
 textarea {
     display: block;
 }
+
+label {
+    display:  block;
+}
