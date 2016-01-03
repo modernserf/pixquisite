@@ -1,52 +1,53 @@
-import "./style.css"
+import "./reset.css"
+import S from "./style.css"
 
 import React from "react"
 import { connect } from "react-redux"
 
 import { Grid } from "./Grid"
-import { PLAY, STEP, PARK } from "constants"
+import { PLAY } from "constants"
 import {
-    load, save, reset, play, step, park, seek, setColor, nextRound, done,
+    load, save, reset, play, step, seek, setColor, nextRound, done,
 } from "actions"
 
 export const Main = connect(({complete}) => ({complete}))(
 function Main ({complete}) {
-    const controls = complete ? <EndControls/> : <Controls/>
+    const controls = complete ? <PlayToggle/> : <Controls/>
     return (
-        <div className="wrap">
-            <Grid/>
+        <div className={S.main}>
+            <div className={S.grid_wrap}>
+                <Grid />
+                <Palette />
+            </div>
             {controls}
         </div>
     )
 })
 
-const EndControls = connect(({mode}) => ({ mode }), { play, park })(
-function EndControls ({mode, play, park}) {
+const hasTouchEvents = "ontouchstart" in document.documentElement
+
+const touchClick = (fn) => hasTouchEvents
+    ? { onTouchEnd: fn }
+    : { onMouseDown: fn }
+
+const PlayToggle = connect(({mode}) => ({ mode }), { play, step })(
+function PlayToggle ({mode, play, step}) {
     const button = mode === PLAY
-        ? <button onClick={park}>Pause</button>
-        : <button onClick={play}>Play</button>
+        ? <button type="button" {...touchClick(step)}>Step</button>
+        : <button type="button" {...touchClick(play)}>Play</button>
     return (
         <div>{button}</div>
     )
 })
 
-const Transport = connect(({mode}) => ({ mode }), { play, step, park })(
-function Transport ({mode, play, step, park}) {
-    const active = (m) => m === mode ? {
-        border: "4px solid black",
-    } : {}
-
+function Transport () {
     return (
-        <div>
-            <button style={active(PLAY)}
-                onClick={play}>Play</button>
-            <button style={active(STEP)}
-                onClick={step}>Step</button>
-            <button style={active(PARK)}
-                onClick={park}>Park</button>
+        <div className={S.transport}>
+            <PlayToggle />
+            <Scrubber />
         </div>
     )
-})
+}
 
 const Rounds = connect(({round}) => ({ round }), { nextRound, done })(
 function Rounds ({ round, nextRound, done }) {
@@ -63,7 +64,7 @@ const Scrubber = connect(
 { seek })(
 function Scrubber ({maxSteps, step, seek}) {
     return (
-        <div>
+        <div className={S.scrubber}>
             <input type="range"
                 min={0} max={maxSteps}
                 value={step}
@@ -77,21 +78,21 @@ const colors = ["black", "white", "red", "blue", "green", "orange", "purple"]
 const Palette = connect((s) => s, { setColor })(
 function Palette ({color, setColor}) {
     const colorCells = colors.map((c) =>
-        <td key={c}
+        <button key={c}
+            type="button"
+            className={S.palette_button}
             style={{
                 backgroundColor: c,
-                padding: "24px 24px",
                 border: c === color ? "4px solid black" : "none",
             }}
-            onClick={() => setColor(c)}>
-            &nbsp;</td>)
+            {...touchClick(() => setColor(c))}/>)
 
     return (
-        <table><tbody><tr>{colorCells}</tr></tbody></table>
+        <div className={S.palette}>{colorCells}</div>
     )
 })
 
-const FileBrowser = connect((s) => s, { load, save, reset })(
+export const FileBrowser = connect((s) => s, { load, save, reset })(
 function FileBrowser ({load, save, reset, saveState = ""}) {
     return (
         <div>
@@ -108,10 +109,7 @@ function Controls () {
     return (
         <div className="control-group">
             <Transport/>
-            <Scrubber/>
-            <Palette/>
             <Rounds/>
-            <FileBrowser/>
         </div>
     )
 }

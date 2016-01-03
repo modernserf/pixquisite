@@ -12,7 +12,7 @@ var envPlugin = new webpack.DefinePlugin({
     },
 })
 
-var cssConfig = "css?localIdentName=[path][name]---[local]---[hash:base64:5]"
+var cssConfig = "css?modules&localIdentName=[path][name]---[local]---[hash:base64:5]"
 
 var entry = envStr === `"development"`
      ? ["webpack/hot/dev-server", "./src/main.js"]

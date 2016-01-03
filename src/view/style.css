@@ -1,26 +1,32 @@
+* {
+    box-sizing: border-box;
+    position: relative;
+}
+
+[type="button"] {
+    cursor: pointer;
+}
+
 canvas {
     border: 1px solid black;
     cursor: crosshair;
 }
 
-.github-link {
+:global .github-link {
     display: none;
 }
 @media (min-width: 960px) {
-    .github-link {
+    :global .github-link {
         display: block;
     }
 }
 
-.wrap {
-    display: flex;
-    flex-direction: column;
-}
-
 [type="range"] {
+    display: block;
     height: 48px;
     font-size: 32px;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -42,4 +48,31 @@ button {
     border-radius: 4px;
     background-color: white;
     font-size: 28px;
+}
+
+.grid_wrap {
+    display: flex;
+    flex-direction: row;
+}
+
+.transport {
+    display: flex;
+    flex-direction: row;
+}
+
+.scrubber {
+    flex-grow: 1;
+}
+
+.palette {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.palette_button {
+    width: 100%;
+    max-width: 44px;
+    height: 44px;
+    border-radius: 0;
+    padding: 0;
 }

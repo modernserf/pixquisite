@@ -75,7 +75,7 @@ class Grid extends React.Component {
             ? e.nativeEvent.targetTouches[0]
             : e
 
-        const offset = 4
+        const offset = 0
 
         draw({
             x: Math.floor((event.clientX - offset) / resolution),
