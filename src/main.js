@@ -5,20 +5,12 @@ import { createHistory } from "history"
 import { syncReduxAndRouter } from "redux-simple-router"
 import thunk from "redux-thunk"
 
-import { localStorageKey } from "constants"
-import { load } from "actions"
-import { reducer } from "store"
+import { reducer, selectRouter } from "store"
 import view from "view"
 
 const store = applyMiddleware(thunk)(createStore)(reducer)
 const history = createHistory()
-syncReduxAndRouter(history, store, (s) => s.routing)
-
-// hydrate state
-var savedData = window.localStorage.getItem(localStorageKey)
-if (savedData) {
-    store.dispatch(load(savedData))
-}
+syncReduxAndRouter(history, store, selectRouter)
 
 document.addEventListener("DOMContentLoaded", () => {
     DOM.render(view(store, history),

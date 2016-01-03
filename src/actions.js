@@ -1,46 +1,24 @@
 import {
-    localStorageKey,
-    PATCH, LOAD, SAVE, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
+    PATCH, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
     NEXT_ROUND, DONE, SET_SPEED,
 } from "constants"
+import { select } from "store"
+import { pushPath } from "redux-simple-router"
 
 export const patch = (payload) => ({ type: PATCH, payload })
 
-export const load = (text) => (dispatch) => {
-    if (!text) {
-        dispatch({type: RESET})
-    }
-    try {
-        var state = JSON.parse(text)
-        dispatch({type: LOAD, payload: state})
-    } catch (e) {
-        console.error("invalid save state.")
-    }
-}
-
 const tick = () => (dispatch, getState) => {
-    const { mode, frameRate } = getState()
+    const { mode, frameRate } = select(getState())
     if (mode === PLAY) {
         dispatch({ type: TICK })
         window.setTimeout(() => dispatch(tick()), 1000 / frameRate)
     }
 }
 
-export const save = () => (dispatch, getState) => {
-    var stateJSON = JSON.stringify(getState().pixels)
-    window.localStorage.setItem(localStorageKey, stateJSON)
-    dispatch({ type: SAVE })
-}
-
 export const play = () => (dispatch, getState) => {
-    if (getState().mode === PLAY) { return }
+    if (select(getState()).mode === PLAY) { return }
     dispatch({type: PLAY})
     dispatch(tick())
-}
-
-export const reset = () => {
-    window.localStorage.removeItem(localStorageKey)
-    return {type: RESET}
 }
 
 let lastDraw = null
@@ -50,12 +28,18 @@ export const draw = (payload) => (dispatch) => {
     dispatch({ type: DRAW, payload })
 }
 
+export const done = () => (dispatch) => {
+    // TODO
+    pushPath("/games/12345")
+    dispatch({ type: DONE })
+}
+
 export const step = () => ({ type: STEP })
 export const seek = (payload) => ({ type: SEEK, payload })
 export const setSpeed = (payload) => ({ type: SET_SPEED, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
 export const nextRound = () => ({ type: NEXT_ROUND })
-export const done = () => ({ type: DONE })
+export const reset = () => ({type: RESET})
 
 function eq (a, b) {
     if (a === b) { return true }

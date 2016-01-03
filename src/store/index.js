@@ -1,117 +1,39 @@
 import { routeReducer } from "redux-simple-router"
+import { combineReducers } from "redux"
+import { ROUTE_SELECTOR } from "constants"
 import {
-    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, SET_SPEED,
-    NEXT_ROUND, DONE, PATCH,
-} from "constants"
+    selector as playSelector, reducer as playReducer,
+} from "./play"
+import {
+    selector as envSelector, reducer as envReducer,
+} from "./env"
 
-// state
-const initState = {
-    step: 0,
-    pixels: [[]],
-    round: 0,
-    stepSpeed: 3,
-    mode: STEP,
-    color: "black",
-    saveState: "",
-    ttl: 8,
-    width: 16,
-    height: 16,
-    maxSteps: 32,
-    maxStepSpeed: 4,
-    resolution: 24, // css px per cell
-    frameRate: 12,
-    complete: false,
-}
+export const reducer = combineReducers({
+    [playSelector]: playReducer,
+    [ROUTE_SELECTOR]: routeReducer,
+    [envSelector]: envReducer,
+})
 
-export function reducer (state = initState, action) {
-    const routerState = routeReducer(state.routing, action)
-    if (routerState !== state.routing) {
-        state = { ...state, routing: routerState }
+export function select (state) {
+    const res = {
+        ...state[playSelector],
+        ...state[envSelector],
     }
+    res.step = res.step % res.maxSteps
+    return res
+}
 
-    const { type, payload } = action
-    switch (type) {
-    case PATCH:
-        return { ...state, ...payload }
-    case TICK:
-        return {
-            ...state,
-            step: nextStep(state),
-            round: state.complete && state.step === (state.maxSteps - 1)
-                ? (state.round + 1) % state.pixels.length
-                : state.round,
-        }
-    case PLAY:
-    case STEP:
-        return state.mode === type
-            ? state
-            : { ...state, mode: type }
-    case SET_SPEED:
-        return { ...state, stepSpeed: payload }
-    case DRAW:
-        return {
-            ...state,
-            pixels: nextPixels(state, payload),
-            step: state.mode === STEP
-                ? nextStepAtSpeed(state)
-                : state.step,
-        }
-    case SEEK:
-        return {
-            ...state,
-            step: payload,
-            mode: state.mode === PLAY ? STEP : state.mode,
-        }
-    case SET_COLOR:
-        return { ...state, color: payload }
-    case LOAD:
-        return {
-            ...initState,
-            pixels: payload,
-            saveState: JSON.stringify(payload),
-        }
-    case RESET:
-        return initState
-    case SAVE:
-        return { ...state, saveState: JSON.stringify(state.pixels) }
-    case NEXT_ROUND:
-        return {
-            ...state,
-            mode: STEP,
-            step: 0,
-            round: state.round + 1,
-            pixels: [...state.pixels, []],
-        }
-    case DONE:
-        return {
-            ...state,
-            mode: STEP,
-            step: 0,
-            round: 0,
-            complete: true,
-        }
+export function selectCompleted (state) {
+    const res = {
+        ...state[playSelector],
+        ...state[envSelector],
+        complete: true,
     }
-    return state
+    res.round = Math.floor(res.step / res.maxSteps)
+    res.step = res.step % res.maxSteps
+    return res
 }
 
-const speeds = [1 / 8, 1 / 4, 1 / 2, 1, 2]
-
-function nextStepAtSpeed ({step, maxSteps, stepSpeed}) {
-    const speed = speeds[stepSpeed]
-    return (step + speed) % maxSteps
-}
-
-function nextStep ({step, maxSteps}) {
-    return (step + 1) % maxSteps
-}
-
-function nextPixels (state, payload) {
-    const thisRound = state.pixels[state.round]
-    const withNext = [
-        ...thisRound,
-        {...payload, step: state.step, color: state.color},
-    ]
-    const nextPixels = [...state.pixels]
-    nextPixels[state.round] = withNext
-    return nextPixels
+export function selectRouter (state) {
+    return state[ROUTE_SELECTOR]
 }

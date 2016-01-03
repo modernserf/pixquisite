@@ -3,22 +3,24 @@
     position: relative;
 }
 
+html {
+    font-family: "Helvetica", sans-serif;
+    color: #222;
+    background-color: #fefcfc;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+p a {
+    text-decoration: underline;
+    color: blue;
+}
+
 [type="button"] {
     cursor: pointer;
-}
-
-canvas {
-    border: 1px solid black;
-    cursor: crosshair;
-}
-
-:global .github-link {
-    display: none;
-}
-@media (min-width: 960px) {
-    :global .github-link {
-        display: block;
-    }
 }
 
 [type="range"] {
@@ -47,39 +49,4 @@ button {
     border-radius: 4px;
     background-color: white;
     font-size: 28px;
-}
-
-.grid_wrap {
-    display: flex;
-    flex-direction: row;
-}
-
-.transport {
-    display: flex;
-    flex-direction: row;
-}
-
-.scrubber {
-    flex-grow: 1;
-    max-width: 400px;
-    margin: 0 24px;
-}
-
-.scrubber_labels {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.palette {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-.palette_button {
-    width: 100%;
-    max-width: 44px;
-    height: 44px;
-    border-radius: 0;
-    padding: 0;
 }
