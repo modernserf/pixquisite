@@ -1,6 +1,7 @@
 import {
     localStorageKey,
     PATCH, LOAD, SAVE, TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, RESET,
+    NEXT_ROUND, DONE,
 } from "constants"
 
 export const patch = (payload) => ({ type: PATCH, payload })
@@ -53,6 +54,8 @@ export const step = () => ({ type: STEP })
 export const park = () => ({ type: PARK })
 export const seek = (payload) => ({ type: SEEK, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
+export const nextRound = () => ({ type: NEXT_ROUND })
+export const done = () => ({ type: DONE })
 
 function eq (a, b) {
     if (a === b) { return true }

@@ -1,12 +1,13 @@
 import {
-    TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, PATCH,
+    TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE,
+    NEXT_ROUND, DONE, PATCH,
 } from "constants"
 
 // state
 const initState = {
     step: 0,
-  // stored as `${x}-${y}`: { x, y, step }
-    pixels: [],
+    pixels: [[]],
+    round: 0,
     mode: STEP,
     color: "black",
     saveState: "",
@@ -16,6 +17,7 @@ const initState = {
     maxSteps: 32,
     resolution: 24, // css px per cell
     frameRate: 12,
+    complete: false,
 }
 
 export function reducer (state = initState, {type, payload}) {
@@ -23,7 +25,13 @@ export function reducer (state = initState, {type, payload}) {
     case PATCH:
         return { ...state, ...payload }
     case TICK:
-        return {...state, step: nextStep(state)}
+        return {
+            ...state,
+            step: nextStep(state),
+            round: state.complete && state.step === (state.maxSteps - 1)
+                ? (state.round + 1) % state.pixels.length
+                : state.round,
+        }
     case PLAY:
     case STEP:
     case PARK:
@@ -33,10 +41,7 @@ export function reducer (state = initState, {type, payload}) {
     case DRAW:
         return {
             ...state,
-            pixels: [
-                ...state.pixels,
-                {...payload, step: state.step, color: state.color},
-            ],
+            pixels: nextPixels(state, payload),
             step: state.mode === STEP
                 ? nextStep(state)
                 : state.step,
@@ -59,10 +64,34 @@ export function reducer (state = initState, {type, payload}) {
         return initState
     case SAVE:
         return { ...state, saveState: JSON.stringify(state.pixels) }
+    case NEXT_ROUND:
+        return {
+            ...state,
+            step: 0,
+            round: state.round + 1,
+            pixels: [...state.pixels, []],
+        }
+    case DONE:
+        return {
+            ...state,
+            step: 0,
+            complete: true,
+        }
     }
     return state
 }
 
 function nextStep ({step, maxSteps}) {
     return (step + 1) % maxSteps
+}
+
+function nextPixels (state, payload) {
+    const thisRound = state.pixels[state.round]
+    const withNext = [
+        ...thisRound,
+        {...payload, step: state.step, color: state.color},
+    ]
+    const nextPixels = [...state.pixels]
+    nextPixels[state.round] = withNext
+    return nextPixels
 }

@@ -3,19 +3,32 @@ import "./style.css"
 import React from "react"
 import { connect } from "react-redux"
 
+import { Grid } from "./Grid"
 import { PLAY, STEP, PARK } from "constants"
 import {
-    load, save, reset, play, step, park, seek, setColor, draw, patch,
+    load, save, reset, play, step, park, seek, setColor, nextRound, done,
 } from "actions"
 
-export function Main () {
+export const Main = connect(({complete}) => ({complete}))(
+function Main ({complete}) {
+    const controls = complete ? <EndControls/> : <Controls/>
     return (
         <div className="wrap">
             <Grid/>
-            <Controls/>
+            {controls}
         </div>
     )
-}
+})
+
+const EndControls = connect(({mode}) => ({ mode }), { play, park })(
+function EndControls ({mode, play, park}) {
+    const button = mode === PLAY
+        ? <button onClick={park}>Pause</button>
+        : <button onClick={play}>Play</button>
+    return (
+        <div>{button}</div>
+    )
+})
 
 const Transport = connect(({mode}) => ({ mode }), { play, step, park })(
 function Transport ({mode, play, step, park}) {
@@ -31,6 +44,16 @@ function Transport ({mode, play, step, park}) {
                 onClick={step}>Step</button>
             <button style={active(PARK)}
                 onClick={park}>Park</button>
+        </div>
+    )
+})
+
+const Rounds = connect(({round}) => ({ round }), { nextRound, done })(
+function Rounds ({ round, nextRound, done }) {
+    return (
+        <div>
+            <button onClick={nextRound}>Next</button>
+            <button onClick={done}>Done</button>
         </div>
     )
 })
@@ -81,120 +104,14 @@ function FileBrowser ({load, save, reset, saveState = ""}) {
     )
 })
 
-function EnvValue ({id, state}) {
-    return (
-        <div>
-            <label>{id}</label>
-            <input type="number"
-                value={state[id]}
-                onChange={(e) => state.patch({
-                    [id]: Number(e.target.value),
-                })}/>
-        </div>
-    )
-}
-
-const Environment = connect((s) => s, { patch })(
-function Environment (state) {
-    const vals = ["ttl", "width", "height", "maxSteps", "resolution", "frameRate"]
-        .map((key) => <EnvValue key={key} id={key} state={state}/>)
-    return (
-        <div>
-            {vals}
-        </div>
-    )
-})
-
 function Controls () {
     return (
         <div className="control-group">
             <Transport/>
             <Scrubber/>
             <Palette/>
+            <Rounds/>
             <FileBrowser/>
-            <Environment/>
         </div>
     )
 }
-
-const mod = (a, b) => ((a % b) + b) % b
-
-const Grid = connect((state) => state, { draw })(
-class Grid extends React.Component {
-    constructor () {
-        super()
-        this.state = { mousedown: false }
-    }
-    setContext (el) {
-        if (!el) { return }
-        this._ctx = el.getContext("2d")
-    }
-    componentWillUpdate (nextProps) {
-        this.drawCanvas(nextProps)
-    }
-    drawCanvas ({pixels, step, width, height, resolution, maxSteps, ttl}) {
-        const ctx = this._ctx
-        ctx.clearRect(0, 0, width * resolution, height * resolution)
-        for (var i = 0, ln = pixels.length; i < ln; i++) {
-            const px = pixels[i]
-            const p = mod(step - px.step, maxSteps)
-            const showStep = p >= 0 && ttl > p
-
-            if (showStep) {
-                ctx.fillStyle = px.color
-                // draw with 1px padding
-                ctx.fillRect(
-                    1 + px.x * resolution,
-                    1 + px.y * resolution,
-                    resolution - 2,
-                    resolution - 2)
-            }
-        }
-    }
-    onMouseDown (e) {
-        e.preventDefault()
-        this.onDraw(e)
-        this.setState({mousedown: true})
-    }
-    onMouseEnd (e) {
-        e.preventDefault()
-        this.setState({mousedown: false})
-    }
-    onMouseMove (e) {
-        e.preventDefault()
-        if (!this.state.mousedown) { return }
-        this.onDraw(e)
-    }
-    onDraw (e) {
-        const { draw, resolution } = this.props
-
-        const event = e.nativeEvent.targetTouches
-            ? e.nativeEvent.targetTouches[0]
-            : e
-
-        const offset = 4
-
-        draw({
-            x: Math.floor((event.clientX - offset) / resolution),
-            y: Math.floor((event.clientY - offset) / resolution),
-        })
-    }
-    render () {
-        const { width, height, resolution } = this.props
-        return (
-            <div>
-                <canvas ref={(el) => this.setContext(el)}
-                    onMouseDown={(e) => this.onMouseDown(e)}
-                    onMouseUp={(e) => this.onMouseEnd(e)}
-                    onMouseOut={(e) => this.onMouseEnd(e)}
-                    onMouseMove={(e) => this.onMouseMove(e)}
-                    onTouchStart={(e) => this.onMouseDown(e)}
-                    onTouchEnd={(e) => this.onMouseEnd(e)}
-                    onTouchMove={(e) => this.onMouseMove(e)}
-                    onTouchCancel={(e) => this.onMouseEnd(e)}
-                    width={width * resolution}
-                    height={height * resolution}/>
-            </div>
-        )
-    }
-})
