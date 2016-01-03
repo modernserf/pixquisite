@@ -2,13 +2,40 @@ import "./reset.css"
 import S from "./style.css"
 
 import React from "react"
-import { connect } from "react-redux"
+import { Provider, connect } from "react-redux"
+import { Router, IndexRoute, Route, Link } from "react-router"
 
 import { Grid } from "./Grid"
 import { PLAY } from "constants"
 import {
     load, save, reset, play, step, seek, setColor, nextRound, done, setSpeed,
 } from "actions"
+
+export default function (store, history) {
+    return (
+        <Provider store={store}>
+            <Router history={history}>
+                <Route path="/" component={Layout}>
+                    <IndexRoute component={Home}/>
+                    <Route path="/play" component={Main}/>
+                    <Route path="/games/:id" component={CompleteGame}/>
+                </Route>
+            </Router>
+        </Provider>
+    )
+}
+
+function Layout ({children}) {
+    return children
+}
+
+function Home () {
+    return <div ><Link to="/play">Play!</Link></div>
+}
+
+function CompleteGame () {
+    return <div >TODO</div>
+}
 
 export const Main = connect(({complete}) => ({complete}))(
 function Main ({complete}) {

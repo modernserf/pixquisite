@@ -1,3 +1,4 @@
+import { routeReducer } from "redux-simple-router"
 import {
     TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, SET_SPEED,
     NEXT_ROUND, DONE, PATCH,
@@ -8,7 +9,7 @@ const initState = {
     step: 0,
     pixels: [[]],
     round: 0,
-    stepSpeed: 4,
+    stepSpeed: 3,
     mode: STEP,
     color: "black",
     saveState: "",
@@ -22,7 +23,13 @@ const initState = {
     complete: false,
 }
 
-export function reducer (state = initState, {type, payload}) {
+export function reducer (state = initState, action) {
+    const routerState = routeReducer(state.routing, action)
+    if (routerState !== state.routing) {
+        state = { ...state, routing: routerState }
+    }
+
+    const { type, payload } = action
     switch (type) {
     case PATCH:
         return { ...state, ...payload }

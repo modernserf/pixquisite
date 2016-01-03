@@ -1,18 +1,18 @@
 import "babel-polyfill"
-import React from "react"
 import DOM from "react-dom"
 import { createStore, applyMiddleware } from "redux"
-import { Provider } from "react-redux"
+import { createHistory } from "history"
+import { syncReduxAndRouter } from "redux-simple-router"
 import thunk from "redux-thunk"
 
 import { localStorageKey } from "constants"
 import { load } from "actions"
 import { reducer } from "store"
-import { Main } from "view"
+import view from "view"
 
-const store = applyMiddleware(
-    thunk
-)(createStore)(reducer)
+const store = applyMiddleware(thunk)(createStore)(reducer)
+const history = createHistory()
+syncReduxAndRouter(history, store, (s) => s.routing)
 
 // hydrate state
 var savedData = window.localStorage.getItem(localStorageKey)
@@ -21,9 +21,6 @@ if (savedData) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    DOM.render(
-        <Provider store={store}>
-            <Main/>
-        </Provider>,
+    DOM.render(view(store, history),
     document.getElementById("app"))
 })
