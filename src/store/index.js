@@ -87,9 +87,11 @@ export function reducer (state = initState, {type, payload}) {
     return state
 }
 
-function nextStepAtSpeed ({step, maxSteps, stepSpeed, maxStepSpeed}) {
-    const inc = 1 / (2 ** (maxStepSpeed - stepSpeed + 1))
-    return (step + inc) % maxSteps
+const speeds = [1 / 8, 1 / 4, 1 / 2, 1, 2]
+
+function nextStepAtSpeed ({step, maxSteps, stepSpeed}) {
+    const speed = speeds[stepSpeed]
+    return (step + speed) % maxSteps
 }
 
 function nextStep ({step, maxSteps}) {

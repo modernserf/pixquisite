@@ -1,4 +1,5 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import { connect } from "react-redux"
 import { draw } from "actions"
 
@@ -45,14 +46,28 @@ export const Grid = connect((state) => state, { draw })(
 class Grid extends React.Component {
     constructor () {
         super()
-        this.state = { mousedown: false }
+        this.state = {
+            mousedown: false,
+            position: { top: 0, left: 0 },
+        }
+        this.setClientRect = ::this.setClientRect
     }
     setContext (el) {
         if (!el) { return }
         this._ctx = el.getContext("2d")
     }
+    componentDidMount () {
+        window.addEventListener("resize", this.setClientRect)
+    }
+    componentWillUnmount () {
+        window.removeEventListener("resize", this.setClientRect)
+    }
     componentWillUpdate (nextProps) {
         drawCanvas(this._ctx, nextProps)
+    }
+    setClientRect () {
+        const el = ReactDOM.findDOMNode(this)
+        this.setState({position: el.getBoundingClientRect()})
     }
     onMouseDown (e) {
         e.preventDefault()
@@ -70,16 +85,15 @@ class Grid extends React.Component {
     }
     onDraw (e) {
         const { draw, resolution } = this.props
+        const { top, left } = this.state.position
 
         const event = e.nativeEvent.targetTouches
             ? e.nativeEvent.targetTouches[0]
             : e
 
-        const offset = 0
-
         draw({
-            x: Math.floor((event.clientX - offset) / resolution),
-            y: Math.floor((event.clientY - offset) / resolution),
+            x: Math.floor((event.clientX - left) / resolution),
+            y: Math.floor((event.clientY - top) / resolution),
         })
     }
     render () {

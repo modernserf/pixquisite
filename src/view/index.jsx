@@ -12,7 +12,14 @@ import {
 
 export const Main = connect(({complete}) => ({complete}))(
 function Main ({complete}) {
-    const controls = complete ? <PlayToggle/> : <Controls/>
+    const controls = complete
+        ? <PlayToggle/>
+        : <div className={S.control_group}>
+            <Transport/>
+            <SpeedScrubber />
+            <Rounds/>
+        </div>
+
     return (
         <div className={S.main}>
             <div className={S.grid_wrap}>
@@ -126,13 +133,3 @@ function FileBrowser ({load, save, reset, saveState = ""}) {
         </div>
     )
 })
-
-function Controls () {
-    return (
-        <div className="control-group">
-            <Transport/>
-            <SpeedScrubber />
-            <Rounds/>
-        </div>
-    )
-}
