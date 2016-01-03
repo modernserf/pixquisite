@@ -26,7 +26,6 @@ canvas {
     height: 48px;
     font-size: 32px;
     width: 100%;
-    max-width: 400px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -39,7 +38,7 @@ textarea {
 }
 
 label {
-    display:  block;
+    display: block;
 }
 
 button {
@@ -62,6 +61,14 @@ button {
 
 .scrubber {
     flex-grow: 1;
+    max-width: 400px;
+    margin: 0 24px;
+}
+
+.scrubber_labels {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .palette {

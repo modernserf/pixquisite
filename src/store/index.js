@@ -1,5 +1,5 @@
 import {
-    TICK, PLAY, STEP, PARK, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE,
+    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, LOAD, RESET, SAVE, SET_SPEED,
     NEXT_ROUND, DONE, PATCH,
 } from "constants"
 
@@ -8,6 +8,7 @@ const initState = {
     step: 0,
     pixels: [[]],
     round: 0,
+    stepSpeed: 4,
     mode: STEP,
     color: "black",
     saveState: "",
@@ -15,6 +16,7 @@ const initState = {
     width: 16,
     height: 16,
     maxSteps: 32,
+    maxStepSpeed: 4,
     resolution: 24, // css px per cell
     frameRate: 12,
     complete: false,
@@ -34,16 +36,17 @@ export function reducer (state = initState, {type, payload}) {
         }
     case PLAY:
     case STEP:
-    case PARK:
         return state.mode === type
             ? state
             : { ...state, mode: type }
+    case SET_SPEED:
+        return { ...state, stepSpeed: payload }
     case DRAW:
         return {
             ...state,
             pixels: nextPixels(state, payload),
             step: state.mode === STEP
-                ? nextStep(state)
+                ? nextStepAtSpeed(state)
                 : state.step,
         }
     case SEEK:
@@ -67,6 +70,7 @@ export function reducer (state = initState, {type, payload}) {
     case NEXT_ROUND:
         return {
             ...state,
+            mode: STEP,
             step: 0,
             round: state.round + 1,
             pixels: [...state.pixels, []],
@@ -74,11 +78,18 @@ export function reducer (state = initState, {type, payload}) {
     case DONE:
         return {
             ...state,
+            mode: STEP,
             step: 0,
+            round: 0,
             complete: true,
         }
     }
     return state
+}
+
+function nextStepAtSpeed ({step, maxSteps, stepSpeed, maxStepSpeed}) {
+    const inc = 1 / (2 ** (maxStepSpeed - stepSpeed + 1))
+    return (step + inc) % maxSteps
 }
 
 function nextStep ({step, maxSteps}) {

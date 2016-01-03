@@ -7,7 +7,7 @@ import { connect } from "react-redux"
 import { Grid } from "./Grid"
 import { PLAY } from "constants"
 import {
-    load, save, reset, play, step, seek, setColor, nextRound, done,
+    load, save, reset, play, step, seek, setColor, nextRound, done, setSpeed,
 } from "actions"
 
 export const Main = connect(({complete}) => ({complete}))(
@@ -20,6 +20,7 @@ function Main ({complete}) {
                 <Palette />
             </div>
             {controls}
+            <FileBrowser />
         </div>
     )
 })
@@ -73,6 +74,27 @@ function Scrubber ({maxSteps, step, seek}) {
     )
 })
 
+const SpeedScrubber = connect(
+({stepSpeed, maxStepSpeed}) => ({stepSpeed, maxStepSpeed}),
+{ setSpeed })(
+function SpeedScrubber ({stepSpeed, maxStepSpeed, setSpeed}) {
+    return (
+        <div className={S.scrubber}>
+            <input type="range"
+                min={0} max={maxStepSpeed}
+                value={stepSpeed}
+                onChange={(e) => {
+                    e.preventDefault()
+                    setSpeed(Number(e.target.value))
+                }}/>
+            <div className={S.scrubber_labels}>
+                <span >slow</span>
+                <span >fast</span>
+            </div>
+        </div>
+    )
+})
+
 const colors = ["black", "white", "red", "blue", "green", "orange", "purple"]
 
 const Palette = connect((s) => s, { setColor })(
@@ -92,7 +114,7 @@ function Palette ({color, setColor}) {
     )
 })
 
-export const FileBrowser = connect((s) => s, { load, save, reset })(
+const FileBrowser = connect((s) => s, { load, save, reset })(
 function FileBrowser ({load, save, reset, saveState = ""}) {
     return (
         <div>
@@ -109,6 +131,7 @@ function Controls () {
     return (
         <div className="control-group">
             <Transport/>
+            <SpeedScrubber />
             <Rounds/>
         </div>
     )
