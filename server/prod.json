@@ -1,0 +1,12 @@
+{
+    "apps":[{
+        "name":"prod-server",
+        "script":"server/prod-server.js",
+        "env":{
+            "NODE_ENV":"production"
+        }
+    },{
+        "name":"game-backend",
+        "script":"server/game.js"
+    }]
+}

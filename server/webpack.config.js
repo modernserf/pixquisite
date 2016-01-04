@@ -4,6 +4,7 @@ var autoprefixer = require("autoprefixer")
 var HtmlPlugin = require("html-webpack-plugin")
 
 var envStr = JSON.stringify(process.env.NODE_ENV || "development")
+var isDev = envStr === `"development"`
 
 // definePlugin takes raw strings and inserts them, so you can put strings of JS if you want.
 var envPlugin = new webpack.DefinePlugin({
@@ -12,11 +13,33 @@ var envPlugin = new webpack.DefinePlugin({
     },
 })
 
+var htmlPlugin = new HtmlPlugin({
+    title: "Pixquisite Corpse",
+    template: "src/index.html",
+    inject: "body",
+    env: envStr,
+    hash: true,
+})
+
 var cssConfig = "css?modules&localIdentName=[path][name]---[local]---[hash:base64:5]"
 
-var entry = envStr === `"development"`
+var entry = isDev
      ? ["webpack/hot/dev-server", "./src/main.js"]
      : "./src/main.js"
+
+var plugins = isDev
+    ? [
+        envPlugin,
+        htmlPlugin,
+        new webpack.HotModuleReplacementPlugin(),
+    ] : [
+        envPlugin,
+        htmlPlugin,
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: { warnings: false },
+        }),
+    ]
 
 module.exports = {
     entry: entry,
@@ -36,17 +59,7 @@ module.exports = {
     postcss: {
         defaults: [autoprefixer],
     },
-    plugins: [
-        envPlugin,
-        new webpack.HotModuleReplacementPlugin(),
-        new HtmlPlugin({
-            title: "Pixquisite Corpse",
-            template: "src/index.html",
-            inject: "body",
-            env: envStr,
-            hash: true,
-        }),
-    ],
+    plugins: plugins,
     resolve: {
         extensions: ["", ".js", ".json", ".jsx"],
         modulesDirectories: ["node_modules", "src"],

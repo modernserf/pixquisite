@@ -57,8 +57,7 @@ app.post("/game", (req, res) => {
     })
 })
 
-var server = app.listen(port, function () {
+var server = app.listen(port, () => {
     var port = server.address().port
-
-    console.log("Example app listening on port", port, "at", new Date())
+    console.log("Game process on port", port)
 })
