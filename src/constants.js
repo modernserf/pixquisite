@@ -13,6 +13,7 @@ export const SET_SPEED = "play/SET_SPEED"
 export const NEXT_ROUND = "play/NEXT_ROUND"
 export const DONE = "play/DONE"
 export const RESET = "play/RESET"
+export const LOAD = "play/LOAD"
 
 export const ENV_SELECTOR = "env/SELECTOR"
 export const PATCH = "env/PATCH"

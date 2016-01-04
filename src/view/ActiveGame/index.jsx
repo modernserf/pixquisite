@@ -11,6 +11,7 @@ import {
     play, step, seek, nextRound, done, setSpeed, setColor, draw,
 } from "actions"
 
+// TODO: should this reset on mount?
 export function ActiveGame () {
     return (
         <div className={S.main}>

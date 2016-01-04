@@ -23,13 +23,17 @@ export function select (state) {
     return res
 }
 
+export function selectSaved (state) {
+    return {pixels: state[playSelector].pixels}
+}
+
 export function selectCompleted (state) {
     const res = {
         ...state[playSelector],
         ...state[envSelector],
         complete: true,
     }
-    res.round = Math.floor(res.step / res.maxSteps)
+    res.round = Math.floor(res.step / res.maxSteps) % res.pixels.length
     res.step = res.step % res.maxSteps
     return res
 }

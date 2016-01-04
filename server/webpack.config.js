@@ -23,7 +23,7 @@ module.exports = {
     output: {
         filename: "main.js",
         path: process.cwd() + "/dist",
-        publicPath: "",
+        publicPath: "/",
     },
     module: {
         loaders: [

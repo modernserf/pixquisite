@@ -2,7 +2,7 @@ import {
     speeds,
     PLAY_SELECTOR,
     TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET, SET_SPEED,
-    NEXT_ROUND, DONE,
+    NEXT_ROUND, DONE, LOAD,
 } from "constants"
 
 export const selector = PLAY_SELECTOR
@@ -63,6 +63,11 @@ export function reducer (state = initState, { type, payload }) {
             mode: STEP,
             step: 0,
             round: 0,
+        }
+    case LOAD:
+        return {
+            ...state,
+            pixels: payload.pixels,
         }
     }
     return state
