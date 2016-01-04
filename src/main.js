@@ -1,4 +1,5 @@
 import "babel-polyfill"
+import "whatwg-fetch"
 import DOM from "react-dom"
 import { createStore, applyMiddleware } from "redux"
 import { createHistory } from "history"
