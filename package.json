@@ -4,8 +4,7 @@
   "description": "Animated Pixel Art Exquisite Corpse",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": ". lib/deploy.sh"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -46,7 +45,6 @@
     "express-http-proxy": "^0.6.0",
     "history": "^1.17.0",
     "minimist": "^1.2.0",
-    "pm2": "^0.15.10",
     "react": "^0.14.5",
     "react-dom": "^0.14.5",
     "react-redux": "^4.0.6",

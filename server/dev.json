@@ -1,9 +1,0 @@
-{
-    "apps":[{
-        "name":"dev-server",
-        "script":"server/dev-server.js"
-    },{
-        "name":"game-backend",
-        "script":"server/game.js"
-    }]
-}
