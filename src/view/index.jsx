@@ -14,7 +14,7 @@ export default function (store, history) {
                 <Route path="/">
                     <IndexRoute component={Home}/>
                     <Route path="/play" component={ActiveGame}/>
-                    <Route path="/games/:id" component={CompleteGame}/>
+                    <Route path="/watch/:id" component={CompleteGame}/>
                 </Route>
             </Router>
         </Provider>
