@@ -105,25 +105,34 @@ function clearCanvas (ctx, {width, height, resolution}) {
     ctx.clearRect(0, 0, width * resolution, height * resolution)
 }
 
+function visibleCurrent (px, {ttl, step, maxSteps}) {
+    return px <= step && px + ttl > step
+}
+
+function visibleTrail (px, params) {
+    return visibleCurrent(px - params.maxSteps, params)
+}
+
 function drawCanvas (ctx, props) {
     clearCanvas(ctx, props)
-    const { step, round, complete, pixels, maxSteps, ttl, resolution } = props
-    // show last px of prev round
+    const { round, complete, pixels, resolution, maxSteps } = props
+    // show trail of previous round
     if (round > 0 || complete) {
         const lastRound = mod(round - 1, pixels.length)
         for (let i = 0, ln = pixels[lastRound].length; i < ln; i++) {
             const px = pixels[lastRound][i]
-            const end = px.step + ttl
-            const showStep = end > maxSteps && end - maxSteps > step
-            if (showStep) { drawPixel(ctx, px, resolution) }
+            if (visibleTrail(px.step % maxSteps, props)) {
+                drawPixel(ctx, px, resolution)
+            }
         }
     }
 
     for (let i = 0, ln = pixels[round].length; i < ln; i++) {
         const px = pixels[round][i]
-        const p = complete ? (step - px.step) : mod(step - px.step, maxSteps)
-        const showStep = p >= 0 && ttl > p
-
-        if (showStep) { drawPixel(ctx, px, resolution) }
+        // show active px
+        if (visibleCurrent(px.step % maxSteps, props) ||
+            (visibleTrail(px.step % maxSteps, props) && !complete)) {
+            drawPixel(ctx, px, resolution)
+        }
     }
 }
