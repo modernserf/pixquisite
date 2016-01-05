@@ -1,4 +1,5 @@
 import {
+    colors,
     PLAY_SELECTOR,
     TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET, SET_SPEED,
     NEXT_ROUND, DONE, LOAD,
@@ -13,7 +14,7 @@ const initState = {
     round: 0,
     decay: 2,
     mode: STEP,
-    color: "black",
+    color: colors[0],
 }
 
 // TODO: better way of integrating global env and this reducer?
