@@ -91,8 +91,10 @@ export class GridWithHandlers extends React.Component {
 
 const mod = (a, b) => ((a % b) + b) % b
 
+const fillStyle = (a, [r, g, b]) => `rgba(${r},${g},${b},${a})`
+
 function drawPixel (ctx, px, resolution) {
-    ctx.fillStyle = px.color
+    ctx.fillStyle = fillStyle(1, px.color)
     // draw with 1px padding
     ctx.fillRect(
         1 + px.x * resolution,
@@ -102,26 +104,27 @@ function drawPixel (ctx, px, resolution) {
 }
 
 function clearCanvas (ctx, {width, height, resolution}) {
-    ctx.clearRect(0, 0, width * resolution, height * resolution)
+    ctx.fillStyle = "rgba(255,255,255,0.5)"
+    ctx.fillRect(0, 0, width * resolution, height * resolution)
 }
 
-function visibleCurrent (px, {ttl, step, maxSteps}) {
-    return px <= step && px + ttl > step
+function visibleCurrent (px, {step, maxSteps}) {
+    return px.step <= step && px.step + px.ttl > step
 }
 
 function visibleTrail (px, params) {
-    return visibleCurrent(px - params.maxSteps, params)
+    return visibleCurrent({step: px.step - params.maxSteps, ttl: px.ttl}, params)
 }
 
 function drawCanvas (ctx, props) {
     clearCanvas(ctx, props)
-    const { round, complete, pixels, resolution, maxSteps } = props
+    const { round, complete, pixels, resolution } = props
     // show trail of previous round
     if (round > 0 || complete) {
         const lastRound = mod(round - 1, pixels.length)
         for (let i = 0, ln = pixels[lastRound].length; i < ln; i++) {
             const px = pixels[lastRound][i]
-            if (visibleTrail(px.step % maxSteps, props)) {
+            if (visibleTrail(px, props)) {
                 drawPixel(ctx, px, resolution)
             }
         }
@@ -130,8 +133,8 @@ function drawCanvas (ctx, props) {
     for (let i = 0, ln = pixels[round].length; i < ln; i++) {
         const px = pixels[round][i]
         // show active px
-        if (visibleCurrent(px.step % maxSteps, props) ||
-            (visibleTrail(px.step % maxSteps, props) && !complete)) {
+        if (visibleCurrent(px, props) ||
+            (visibleTrail(px, props) && !complete)) {
             drawPixel(ctx, px, resolution)
         }
     }

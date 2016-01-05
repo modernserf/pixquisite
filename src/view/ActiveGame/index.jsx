@@ -73,19 +73,19 @@ function Scrubber ({maxSteps, step, seek}) {
 })
 
 const SpeedScrubber = connect(select, { setSpeed })(
-function SpeedScrubber ({stepSpeed, maxStepSpeed, setSpeed}) {
+function SpeedScrubber ({decay, maxDecay, setSpeed}) {
     return (
         <div className={S.scrubber}>
             <input type="range"
-                min={0} max={maxStepSpeed}
-                value={stepSpeed}
+                min={0} max={maxDecay}
+                value={decay}
                 onChange={(e) => {
                     e.preventDefault()
                     setSpeed(Number(e.target.value))
                 }}/>
             <div className={S.scrubber_labels}>
-                <span >slow</span>
                 <span >fast</span>
+                <span >slow</span>
             </div>
         </div>
     )

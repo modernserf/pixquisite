@@ -21,9 +21,11 @@ export const PATCH = "env/PATCH"
 export const ROUTE_SELECTOR = "route/SELECTOR"
 
 export const colors = [
-    "black", "white", "red", "blue", "green", "orange", "purple",
-]
-
-export const speeds = [
-    1 / 8, 1 / 4, 1 / 2, 1, 2,
+    [20, 20, 20],         // black
+    [255, 255, 255],   // white
+    [255, 0, 0],       // red
+    [0, 0, 255],       // blue
+    [0, 127, 0],       // green
+    [255, 127, 0],     // orange
+    [127, 0, 127],     // purple
 ]
