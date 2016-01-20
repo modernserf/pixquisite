@@ -15,12 +15,10 @@ export const reducer = combineReducers({
 })
 
 export function select (state) {
-    const res = {
+    return {
         ...state[playSelector],
         ...state[envSelector],
     }
-    res.step = res.step % res.maxSteps
-    return res
 }
 
 export function selectSaved (state) {
