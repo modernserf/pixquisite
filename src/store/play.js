@@ -76,6 +76,7 @@ export function reducer (state = initState, { type, payload }) {
         return {
             ...state,
             pixels: payload.pixels,
+            mode: PLAY,
         }
     }
     return state

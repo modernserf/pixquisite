@@ -1,9 +1,10 @@
 import {
-    PATCH, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
-    NEXT_ROUND, DONE, SET_SPEED, LOAD,
+    PATCH, TICK, PLAY, STEP, DRAW, DRAW_REQUEST, SEEK, SET_COLOR,
+    RESET, NEXT_ROUND, DONE, DONE_REQUEST, SET_SPEED, LOAD, LOAD_REQUEST,
 } from "constants"
 import { select, selectSaved } from "store"
 import { pushPath } from "redux-simple-router"
+import { take, put, call } from "redux-saga"
 
 const api = {
     load: (id) => window.fetch(`/game/${id}`).then((r) => r.json()),
@@ -14,59 +15,74 @@ const api = {
     }).then((r) => r.json()),
 }
 
+const tick = loop(function * (getState) {
+    const { mode, frameRate } = select(getState())
+    yield sleep(1000 / frameRate)
+    if (mode === PLAY) {
+        yield put({ type: TICK })
+    }
+})
+
+const resetEffects = loop(function * () {
+    yield take(RESET)
+    yield put(pushPath("/play"))
+})
+
 // TODO: 404 page (maybe an animation!)
-export const load = (id) => async (dispatch) => {
+const loadEffects = loop(function * () {
+    const { payload: id } = yield take(LOAD_REQUEST)
     try {
-        const payload = await api.load(id)
-        dispatch({ type: LOAD, payload })
-        dispatch(play())
+        const payload = yield call(api.load, id)
+        yield put({ type: LOAD, payload })
     } catch (e) {
         console.error("No data for this page.")
     }
-}
+})
 
-export const patch = (payload) => ({ type: PATCH, payload })
-
-const tick = () => (dispatch, getState) => {
-    const { mode, frameRate } = select(getState())
-    if (mode === PLAY) {
-        window.setTimeout(() => dispatch(tick()), 1000 / frameRate)
-        dispatch({ type: TICK })
+function * drawSaga () {
+    let lastDraw = null
+    while (true) {
+        const { payload } = yield take(DRAW_REQUEST)
+        if (lastDraw && eq(lastDraw, payload)) { continue }
+        lastDraw = payload
+        yield put({ type: DRAW, payload })
     }
 }
 
-export const play = () => (dispatch, getState) => {
-    if (select(getState()).mode === PLAY) { return }
-    dispatch({type: PLAY})
-    dispatch(tick())
-}
+const doneSaga = loop(function * (getState) {
+    yield take(DONE_REQUEST)
+    // TODO: do something while waiting
+    try {
+        const data = selectSaved(getState())
+        const res = yield call(api.save, data)
+        yield put(pushPath(`/watch/${res.id}`))
+        yield put({ type: DONE, payload: res })
+    } catch (e) {
+        // TODO: handle error
+    }
+})
 
-let lastDraw = null
-export const draw = (payload) => (dispatch) => {
-    if (lastDraw && eq(lastDraw, payload)) { return }
-    lastDraw = payload
-    dispatch({ type: DRAW, payload })
-}
+export const sagas = [tick, resetEffects, loadEffects, drawSaga, doneSaga]
 
-// TODO: handle error
-// TODO: do something while waiting
-export const done = () => async (dispatch, getState) => {
-    const data = selectSaved(getState())
-    const res = await api.save(data)
-    dispatch(pushPath(`/watch/${res.id}`))
-    dispatch({ type: DONE })
-}
-
-export const reset = () => (dispatch) => {
-    dispatch(pushPath("/play"))
-    dispatch({type: RESET})
-}
-
+export const load = (id) => ({ type: LOAD_REQUEST, payload: id })
+export const patch = (payload) => ({ type: PATCH, payload })
+export const draw = (payload) => ({ type: DRAW_REQUEST, payload })
+export const done = () => ({ type: DONE_REQUEST })
+export const play = () => ({ type: PLAY })
 export const step = () => ({ type: STEP })
 export const seek = (payload) => ({ type: SEEK, payload })
 export const setSpeed = (payload) => ({ type: SET_SPEED, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
 export const nextRound = () => ({ type: NEXT_ROUND })
+export const reset = () => ({type: RESET})
+
+function loop (gen) {
+    return function * (getState) {
+        while (true) {
+            yield* gen(getState)
+        }
+    }
+}
 
 function eq (a, b) {
     if (a === b) { return true }
@@ -74,4 +90,10 @@ function eq (a, b) {
         if (a[key] !== b[key]) { return false }
     }
     return true
+}
+
+function sleep (ms) {
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, ms)
+    })
 }

@@ -4,12 +4,14 @@ import DOM from "react-dom"
 import { createStore, applyMiddleware } from "redux"
 import { createHistory } from "history"
 import { syncReduxAndRouter } from "redux-simple-router"
-import thunk from "redux-thunk"
-
+import sagaMiddleware from "redux-saga"
+import { sagas } from "actions"
 import { reducer, selectRouter } from "store"
 import view from "view"
 
-const store = applyMiddleware(thunk)(createStore)(reducer)
+const store = applyMiddleware(
+    sagaMiddleware(...sagas)
+)(createStore)(reducer)
 const history = createHistory()
 syncReduxAndRouter(history, store, selectRouter)
 
