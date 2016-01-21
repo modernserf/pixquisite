@@ -1,6 +1,7 @@
 import {
     PATCH, TICK, PLAY, STEP, DRAW, DRAW_REQUEST, SEEK, SET_COLOR,
     RESET, NEXT_ROUND, DONE, DONE_REQUEST, SET_SPEED, LOAD, LOAD_REQUEST,
+    SET_RAINBOW, rainbowCycle,
 } from "constants"
 import { select, selectSaved } from "store"
 import { pushPath } from "redux-simple-router"
@@ -62,7 +63,20 @@ const doneSaga = loop(function * (getState) {
     }
 })
 
-export const sagas = [tick, resetEffects, loadEffects, drawSaga, doneSaga]
+// rainbow is free-running cycle
+const rainbow = function * () {
+    let index = 0
+    const max = rainbowCycle.length
+    while (true) {
+        yield put({ type: SET_RAINBOW, payload: rainbowCycle[index] })
+        index = (index + 1) % max
+        yield sleep(100)
+    }
+}
+
+export const sagas = [
+    tick, resetEffects, loadEffects, drawSaga, doneSaga, rainbow,
+]
 
 export const load = (id) => ({ type: LOAD_REQUEST, payload: id })
 export const patch = (payload) => ({ type: PATCH, payload })

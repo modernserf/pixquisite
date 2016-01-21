@@ -1,5 +1,5 @@
 // constants
-export const localStorageKey = "pixquisite-v3"
+export const localStorageKey = "pixquisite-v4"
 
 // gameplay
 export const PLAY_SELECTOR = "play/SELECTOR"
@@ -17,18 +17,32 @@ export const DONE_REQUEST = "play/DONE_REQUEST"
 export const RESET = "play/RESET"
 export const LOAD = "play/LOAD"
 export const LOAD_REQUEST = "play/LOAD_REQUEST"
+export const SET_RAINBOW = "play/SET_RAINBOW"
 
 export const ENV_SELECTOR = "env/SELECTOR"
 export const PATCH = "env/PATCH"
 
 export const ROUTE_SELECTOR = "route/SELECTOR"
 
+export const colorMap = {
+    black: [20, 20, 20],
+    white: [255, 255, 255],
+    red: [255, 0, 0],
+    yellow: [255, 255, 0],
+    blue: [0, 0, 255],
+    green: [0, 127, 0],
+    orange: [255, 127, 0],
+    pink: [255, 127, 127],
+    purple: [127, 0, 127],
+    cyan: [127, 127, 255],
+    lime: [0, 255, 0],
+    lavender: [255, 127, 255],
+}
+
+export const rainbowCycle = [
+    "pink", "orange", "yellow", "lime", "cyan", "lavender",
+]
+
 export const colors = [
-    [20, 20, 20],         // black
-    [255, 255, 255],   // white
-    [255, 0, 0],       // red
-    [0, 0, 255],       // blue
-    [0, 127, 0],       // green
-    [255, 127, 0],     // orange
-    [127, 0, 127],     // purple
+    "black", "white", "red", "blue", "green", "orange", "purple", "rainbow",
 ]

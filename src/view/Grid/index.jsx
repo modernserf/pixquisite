@@ -93,8 +93,8 @@ const mod = (a, b) => ((a % b) + b) % b
 
 const fillStyle = (a, [r, g, b]) => `rgba(${r},${g},${b},${a})`
 
-function drawPixel (ctx, px, resolution) {
-    ctx.fillStyle = fillStyle(1, px.color)
+function drawPixel (ctx, px, resolution, getColor) {
+    ctx.fillStyle = fillStyle(1, getColor(px.color))
     // draw with 1px padding
     ctx.fillRect(
         1 + px.x * resolution,
@@ -125,7 +125,7 @@ function drawCanvas (ctx, props) {
         for (let i = 0, ln = pixels[lastRound].length; i < ln; i++) {
             const px = pixels[lastRound][i]
             if (visibleTrail(px, props)) {
-                drawPixel(ctx, px, resolution)
+                drawPixel(ctx, px, resolution, props.getColor)
             }
         }
     }
@@ -135,7 +135,7 @@ function drawCanvas (ctx, props) {
         // show active px
         if (visibleCurrent(px, props) ||
             (visibleTrail(px, props) && !complete)) {
-            drawPixel(ctx, px, resolution)
+            drawPixel(ctx, px, resolution, props.getColor)
         }
     }
 }
