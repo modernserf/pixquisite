@@ -15,23 +15,22 @@ const initState = {
     decay: 2,
     mode: STEP,
     color: colors[0],
+    // TODO: better way of integrating global env and this reducer?
+    maxSteps: 32,
 }
 
-// TODO: better way of integrating global env and this reducer?
-const maxSteps = 32
-
-function step ({mode, maxSteps}, state, {type, payload}) {
+function step ({mode}, state, {type, payload}) {
     switch (type) {
     case TICK:
-        return nextStep(state, maxSteps)
+        return state + 1
     case DRAW:
-        return mode === STEP ? nextStep(state, maxSteps) : state
+        return mode === STEP ? (state + 1) : state
     case NEXT_ROUND:
     case DONE:
     case LOAD:
         return 0
     case SEEK:
-        return payload % maxSteps
+        return payload
     }
     return state
 }
@@ -86,22 +85,19 @@ export function reducer (state = initState, action) {
 
     return {
         ...state,
-        step: step({mode: state.mode, maxSteps}, state.step, action),
+        step: step(state, state.step, action),
         mode: mode(state.mode, action),
         round: round(state.round, action),
         pixels: pixels(state, state.pixels, action),
     }
 }
 
-function nextStep (step, maxSteps) {
-    return (step + 1) % maxSteps
-}
-
-function nextPixels ({ step, color, decay, round }, pixels, payload) {
+function nextPixels ({step, color, decay, round, maxSteps}, pixels, payload) {
     const thisRound = pixels[round]
+    const frameStep = step % maxSteps
     const withNext = [
         ...thisRound,
-        {...payload, step, color, ttl: 2 ** (decay + 1)},
+        {...payload, step: frameStep, color, ttl: 2 ** (decay + 1)},
     ]
     const nextPixels = [...pixels]
     nextPixels[round] = withNext

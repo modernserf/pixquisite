@@ -3,7 +3,6 @@ import { ENV_SELECTOR, PATCH } from "constants"
 const initState = {
     width: 16,
     height: 16,
-    maxSteps: 32,
     maxDecay: 4,
     resolution: 24, // css px per cell
     frameRate: 12,
