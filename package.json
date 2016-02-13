@@ -16,6 +16,30 @@
     "url": "https://github.com/modernserf/pixquisite/issues"
   },
   "homepage": "https://github.com/modernserf/pixquisite#readme",
+  "babel": {
+      "presets": ["react","es2015","stage-0"],
+      "env": {
+          "development": {
+              "presets": ["react-hmre"]
+          }
+      }
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "standard",
+    "plugins": [
+      "react"
+    ],
+    "ecmaFeatures": {
+        "jsx": true
+    },
+    "rules": {
+      "quotes":[2, "double"],
+      "comma-dangle":[2,"always-multiline"],
+      "indent":[2,4],
+      "react/jsx-uses-react":[2]
+    }
+  },
   "devDependencies": {
     "autoprefixer": "^6.2.3",
     "babel-core": "^6.3.26",
