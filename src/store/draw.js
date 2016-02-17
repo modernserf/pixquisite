@@ -7,11 +7,10 @@ const { maxSteps, width } = env
 
 const initState = {
     events: [],
-    frames: [],
+    frames: [], // note: this gets mutated!
 }
 
 export function reducer (state = initState, {type, payload}) {
-    if (type === RESET) { return initState }
     switch (type) {
     case DRAW:
         return {
@@ -23,11 +22,21 @@ export function reducer (state = initState, {type, payload}) {
             events: payload.events,
             frames: payload.events.reduce(addToFrame, []),
         }
+    case RESET:
+        console.log("reset")
+        return {
+            events: [],
+            frames: [],
+        }
     }
     return state
 }
 
 export const selector = DRAW_SELECTOR
+
+export function selectSaved (state) {
+    return { events: state[DRAW_SELECTOR].events }
+}
 
 export function select (state) {
     const { frames } = state[DRAW_SELECTOR]
@@ -60,12 +69,13 @@ function * drawSaga (getState) {
 }
 
 function addToFrame (frames, event) {
+    const nextFrames = [...frames]
     const { x, y, step, ttl, color } = event
     for (let i = 0; i < ttl; i++) {
         const f = (step + i) % maxSteps
         const s = (y * width) + x
-        if (!frames[f]) frames[f] = []
-        frames[f][s] = { color }
+        if (!nextFrames[f]) nextFrames[f] = []
+        nextFrames[f][s] = { color }
     }
-    return frames
+    return nextFrames
 }

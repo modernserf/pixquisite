@@ -1,9 +1,9 @@
 import {
     PLAY, STEP, DRAW_REQUEST, SEEK, SET_COLOR,
-    RESET, NEXT_ROUND, DONE, DONE_REQUEST, SET_SPEED, LOAD, LOAD_REQUEST,
+    RESET, DONE, DONE_REQUEST, SET_SPEED, LOAD, LOAD_REQUEST,
 } from "constants"
-import { selectSaved } from "store"
-import { pushPath } from "redux-simple-router"
+import { selectSaved } from "store/draw"
+import { routeActions } from "react-router-redux"
 import { take, put, call } from "redux-saga/effects"
 
 const api = {
@@ -18,7 +18,7 @@ const api = {
 function * resetEffects () {
     while (true) {
         yield take(RESET)
-        yield put(pushPath("/play"))
+        yield put(routeActions.push("/play"))
     }
 }
 
@@ -40,10 +40,10 @@ function * doneSaga (getState) {
         yield take(DONE_REQUEST)
         // TODO: do something while waiting
         try {
-            const data = selectSaved(getState())
-            const res = yield call(api.save, data)
-            yield put(pushPath(`/watch/${res.id}`))
-            yield put({ type: DONE, payload: res })
+            const saved = selectSaved(getState())
+            const res = yield call(api.save, saved)
+            yield put({ type: DONE })
+            yield put(routeActions.push(`/watch/${res.id}`))
         } catch (e) {
             // TODO: handle error
         }
@@ -62,5 +62,4 @@ export const step = () => ({ type: STEP })
 export const seek = (payload) => ({ type: SEEK, payload })
 export const setSpeed = (payload) => ({ type: SET_SPEED, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
-export const nextRound = () => ({ type: NEXT_ROUND })
 export const reset = () => ({type: RESET})

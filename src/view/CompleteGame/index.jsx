@@ -1,9 +1,10 @@
 import React from "react"
 import { connect } from "react-redux"
-
+import { createSelector } from "reselect"
 import S from "./style.css"
 import { load, reset } from "actions"
-import { selectCompleted } from "store"
+import { select as selectT } from "store/transient"
+import { select as selectDraw } from "store/draw"
 import { Grid } from "view/Grid"
 
 export const CompleteGame = connect(() => ({}), {load, reset})(
@@ -25,4 +26,7 @@ class CompleteGame extends React.Component {
     }
 })
 
-const GridController = connect(selectCompleted)(Grid)
+const GridController = connect(createSelector(
+(state) => selectT(state).colorStep,
+selectDraw,
+(colorStep, drawState) => ({...drawState, colorStep})))(Grid)

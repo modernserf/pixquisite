@@ -11,7 +11,6 @@ export const DRAW_REQUEST = "play/DRAW_REQUEST"
 export const SEEK = "play/SEEK"
 export const SET_COLOR = "play/SET_COLOR"
 export const SET_SPEED = "play/SET_SPEED"
-export const NEXT_ROUND = "play/NEXT_ROUND"
 export const DONE = "play/DONE"
 export const DONE_REQUEST = "play/DONE_REQUEST"
 export const RESET = "play/RESET"
@@ -27,7 +26,7 @@ export const env = {
     height: 16,
     maxDecay: 4,
     maxSteps: 32,
-    resolution: 20, // css px per cell
+    resolution: 24, // css px per cell
     frameRate: 12,
 }
 
