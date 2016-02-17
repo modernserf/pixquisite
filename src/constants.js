@@ -1,5 +1,5 @@
 // constants
-export const localStorageKey = "pixquisite-v4"
+export const localStorageKey = "pixquisite-v5"
 
 // gameplay
 export const PLAY_SELECTOR = "play/SELECTOR"
@@ -24,7 +24,7 @@ export const PATCH = "env/PATCH"
 
 export const ROUTE_SELECTOR = "route/SELECTOR"
 
-export const colorMap = {
+const c = {
     black: [20, 20, 20],
     white: [255, 255, 255],
     red: [255, 0, 0],
@@ -39,10 +39,17 @@ export const colorMap = {
     lavender: [255, 127, 255],
 }
 
-export const rainbowCycle = [
-    "pink", "orange", "yellow", "lime", "cyan", "lavender",
+const basePallete = [
+    "black", "white", "red", "blue", "green", "orange", "purple",
 ]
 
-export const colors = [
-    "black", "white", "red", "blue", "green", "orange", "purple", "rainbow",
+// map color name to cycle
+// most colors are single-item cycle
+export const colorMap = basePallete.reduce((m, key) => {
+    m[key] = [c[key]]
+    return m
+}, {})
+
+colorMap.rainbow = [
+    c.pink, c.orange, c.yellow, c.lime, c.cyan, c.lavender,
 ]
