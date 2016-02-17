@@ -9,7 +9,7 @@ import { Palette } from "view/Palette"
 import { env, PLAY } from "constants"
 import { touchClick } from "util/touch-click"
 import {
-    play, step, seek, nextRound, done, setSpeed, setColor, draw,
+    play, step, seek, done, setSpeed, setColor, draw,
 } from "actions"
 const { maxDecay, maxSteps } = env
 
@@ -56,11 +56,10 @@ function Transport () {
     )
 }
 
-const Rounds = connect(selectT, { nextRound, done })(
-function Rounds ({ round, nextRound, done }) {
+const Rounds = connect(selectT, { done })(
+function Rounds ({ round, done }) {
     return (
         <div>
-            <button onClick={nextRound}>Next</button>
             <button onClick={done}>Done</button>
         </div>
     )

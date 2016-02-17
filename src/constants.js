@@ -27,7 +27,7 @@ export const env = {
     height: 16,
     maxDecay: 4,
     maxSteps: 32,
-    resolution: 24, // css px per cell
+    resolution: 20, // css px per cell
     frameRate: 12,
 }
 

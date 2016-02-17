@@ -91,11 +91,8 @@ export class GridWithHandlers extends React.Component {
 
 const fillStyle = (a, [r, g, b]) => `rgba(${r},${g},${b},${a})`
 
-const xy = (step) => ({ x: step % width, y: Math.floor(step / width) })
-
-function drawPixel (ctx, step, px, colorStep = 0, alpha = 1) {
+function drawPixel (ctx, x, y, px, colorStep = 0, alpha = 1) {
     const color = colorMap[px.color]
-    const { x, y } = xy(step)
     ctx.fillStyle = fillStyle(alpha, color[colorStep % color.length])
     // draw with 1px padding
     ctx.fillRect(
@@ -110,47 +107,15 @@ function clearCanvas (ctx) {
     ctx.fillRect(0, 0, width * resolution, height * resolution)
 }
 
-function drawFrame (ctx, frame, colorStep) {
-    for (let i = 0; i < height * width; i++) {
-        if (frame && frame[i]) {
-            drawPixel(ctx, i, frame[i], colorStep)
+function drawCanvas (ctx, { frames, currentIndex, colorStep }) {
+    clearCanvas(ctx)
+    const frame = frames[currentIndex]
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const s = (y * width) + x
+            if (frame && frame[s]) {
+                drawPixel(ctx, x, y, frame[s], colorStep)
+            }
         }
     }
 }
-
-function drawCanvas (ctx, { frames, currentIndex, colorStep }) {
-    clearCanvas(ctx)
-    drawFrame(ctx, frames[currentIndex], colorStep)
-    // for ()
-    //
-    //
-    //
-    // const { round, complete, pixels, resolution } = props
-    // // show trail of previous round
-    // if (round > 0 || complete) {
-    //     const lastRound = mod(round - 1, pixels.length)
-    //     for (let i = 0, ln = pixels[lastRound].length; i < ln; i++) {
-    //         const px = pixels[lastRound][i]
-    //         if (visibleTrail(px, props)) {
-    //             drawPixel(ctx, px, resolution, props.getColor)
-    //         }
-    //     }
-    // }
-    //
-    // for (let i = 0, ln = pixels[round].length; i < ln; i++) {
-    //     const px = pixels[round][i]
-    //     // show active px
-    //     if (visibleCurrent(px, props) ||
-    //         (visibleTrail(px, props) && !complete)) {
-    //         drawPixel(ctx, px, resolution, props.getColor)
-    //     }
-    // }
-}
-
-// function visibleCurrent (px, {step, maxSteps}) {
-//     return px.step <= step && px.step + px.ttl > step
-// }
-//
-// function visibleTrail (px, params) {
-//     return visibleCurrent({step: px.step - params.maxSteps, ttl: px.ttl}, params)
-// }

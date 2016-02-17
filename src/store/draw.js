@@ -1,7 +1,6 @@
 import { DRAW_SELECTOR, DRAW_REQUEST, DRAW, LOAD, RESET } from "constants"
 import { take, put } from "redux-saga/effects"
 import { select as selectT } from "store/transient"
-import { sleep } from "util/sleep"
 import { env } from "constants"
 
 const { maxSteps, width } = env
@@ -32,8 +31,8 @@ export const selector = DRAW_SELECTOR
 
 export function select (state) {
     const { frames } = state[DRAW_SELECTOR]
-    const { step, round } = selectT(state)
-    const currentIndex = frameForState(step, round)
+    const { step } = selectT(state)
+    const currentIndex = step % maxSteps
 
     return { frames, currentIndex }
 }
@@ -41,22 +40,29 @@ export function select (state) {
 export const sagas = [drawSaga]
 
 function * drawSaga (getState) {
+    let lastPayload = {}
     while (true) {
         const { payload } = yield take(DRAW_REQUEST)
-        const { step, round, decay, color } = selectT(getState())
+        const { step, decay, color } = selectT(getState())
         const ttl = 2 ** (decay + 1)
-        const fullPayload = { ...payload, step, round, ttl, color }
+        const fullPayload = { ...payload, step, ttl, color }
+
+        if (lastPayload.x === fullPayload.x &&
+            lastPayload.y === fullPayload.y &&
+            lastPayload.color === fullPayload.color &&
+            lastPayload.ttl === fullPayload.ttl) {
+            continue
+        }
+        lastPayload = fullPayload
+
         yield put({ type: DRAW, payload: fullPayload })
-        yield sleep(50) // debounce
     }
 }
 
-const frameForState = (step, round) => step + (round * maxSteps)
-
 function addToFrame (frames, event) {
-    const { x, y, step, round, ttl, color } = event
+    const { x, y, step, ttl, color } = event
     for (let i = 0; i < ttl; i++) {
-        const f = frameForState(step + i, round)
+        const f = (step + i) % maxSteps
         const s = (y * width) + x
         if (!frames[f]) frames[f] = []
         frames[f][s] = { color }

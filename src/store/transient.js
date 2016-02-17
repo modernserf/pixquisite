@@ -1,8 +1,6 @@
 import {
-    colorMap,
-    PLAY_SELECTOR,
-    TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET, SET_SPEED,
-    NEXT_ROUND, DONE, LOAD,
+    colorMap, PLAY_SELECTOR, TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET,
+    SET_SPEED, DONE, LOAD,
 } from "constants"
 import { sleep } from "util/sleep"
 import { put } from "redux-saga/effects"
@@ -12,7 +10,6 @@ const { maxSteps, frameRate } = env
 
 const initState = {
     step: 0,
-    round: 0,
     decay: 2,
     mode: STEP,
     color: Object.keys(colorMap)[0],
@@ -22,7 +19,7 @@ export function reducer (state = initState, action) {
     if (action.type === RESET) { return initState }
 
     return combineDependentReducers(state, action, {
-        step, mode, round, colorStep,
+        step, mode, colorStep,
         color: patchOn(SET_COLOR),
         decay: patchOn(SET_SPEED),
     })
@@ -46,7 +43,6 @@ function step (state, {type, payload}, {mode}) {
         return mode === PLAY ? (state + 1) % maxSteps : state
     case DRAW:
         return mode === STEP ? (state + 1) % maxSteps : state
-    case NEXT_ROUND:
     case DONE:
     case LOAD:
         return 0
@@ -62,22 +58,10 @@ function mode (state, {type}) {
     case STEP:
         return type
     case SEEK:
-    case NEXT_ROUND:
     case DONE:
         return STEP
     case LOAD:
         return PLAY
-    }
-    return state
-}
-
-function round (state, {type}) {
-    switch (type) {
-    case NEXT_ROUND:
-        return state + 1
-    case DONE:
-    case LOAD:
-        return 0
     }
     return state
 }
