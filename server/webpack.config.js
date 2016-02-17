@@ -16,16 +16,18 @@ var envPlugin = new webpack.DefinePlugin({
 var htmlPlugin = new HtmlPlugin({
     title: "Pixquisite Corpse",
     template: "src/index.html",
-    inject: "body",
+    inject: "head",
     env: envStr,
     hash: true,
 })
 
 var cssConfig = "css?modules&localIdentName=[path][name]---[local]---[hash:base64:5]"
 
+var polyfills = ["babel-polyfill", "whatwg-fetch"]
+
 var entry = isDev
-     ? ["webpack/hot/dev-server", "./src/main.js"]
-     : "./src/main.js"
+     ? ["webpack/hot/dev-server", ...polyfills, "./src/main.js"]
+     : [...polyfills, "./src/main.js"]
 
 var plugins = isDev
     ? [

@@ -1,21 +1,24 @@
-import "babel-polyfill"
-import "whatwg-fetch"
 import DOM from "react-dom"
-import { createStore, applyMiddleware } from "redux"
-import { createHistory } from "history"
-import { syncReduxAndRouter } from "redux-simple-router"
+import { createStore, applyMiddleware, compose } from "redux"
+import { browserHistory } from "react-router"
+import { syncHistory } from "react-router-redux"
 import sagaMiddleware from "redux-saga"
-import { sagas } from "actions"
-import { reducer, selectRouter } from "store"
+import { reducer, sagas } from "store"
 import view from "view"
+import { ROUTE_SELECTOR } from "constants"
 
-const store = applyMiddleware(
-    sagaMiddleware(...sagas)
-)(createStore)(reducer)
-const history = createHistory()
-syncReduxAndRouter(history, store, selectRouter)
+const routeMiddleware = syncHistory(browserHistory)
+
+const store = createStore(
+    reducer,
+    compose(
+        applyMiddleware(routeMiddleware, sagaMiddleware(...sagas)),
+        window.devToolsExtension ? window.devToolsExtension() : (f) => f))
+
+routeMiddleware.listenForReplays(store,
+    (state) => state[ROUTE_SELECTOR].location)
 
 document.addEventListener("DOMContentLoaded", () => {
-    DOM.render(view(store, history),
+    DOM.render(view(store, browserHistory),
     document.getElementById("app"))
 })

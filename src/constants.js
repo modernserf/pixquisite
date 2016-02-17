@@ -17,12 +17,19 @@ export const DONE_REQUEST = "play/DONE_REQUEST"
 export const RESET = "play/RESET"
 export const LOAD = "play/LOAD"
 export const LOAD_REQUEST = "play/LOAD_REQUEST"
-export const SET_RAINBOW = "play/SET_RAINBOW"
 
-export const ENV_SELECTOR = "env/SELECTOR"
-export const PATCH = "env/PATCH"
+export const DRAW_SELECTOR = "draw/SELECTOR"
 
 export const ROUTE_SELECTOR = "route/SELECTOR"
+
+export const env = {
+    width: 16,
+    height: 16,
+    maxDecay: 4,
+    maxSteps: 32,
+    resolution: 24, // css px per cell
+    frameRate: 12,
+}
 
 const c = {
     black: [20, 20, 20],

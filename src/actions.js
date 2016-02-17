@@ -1,11 +1,10 @@
 import {
-    PATCH, TICK, PLAY, STEP, DRAW, DRAW_REQUEST, SEEK, SET_COLOR,
+    PLAY, STEP, DRAW_REQUEST, SEEK, SET_COLOR,
     RESET, NEXT_ROUND, DONE, DONE_REQUEST, SET_SPEED, LOAD, LOAD_REQUEST,
-    ENV_SELECTOR,
 } from "constants"
 import { selectSaved } from "store"
 import { pushPath } from "redux-simple-router"
-import { take, put, call } from "redux-saga"
+import { take, put, call } from "redux-saga/effects"
 
 const api = {
     load: (id) => window.fetch(`/game/${id}`).then((r) => r.json()),
@@ -15,7 +14,6 @@ const api = {
         headers: new window.Headers({"Content-Type": "application/json"}),
     }).then((r) => r.json()),
 }
-
 
 function * resetEffects () {
     while (true) {
@@ -37,8 +35,6 @@ function * loadEffects () {
     }
 }
 
-
-
 function * doneSaga (getState) {
     while (true) {
         yield take(DONE_REQUEST)
@@ -55,11 +51,10 @@ function * doneSaga (getState) {
 }
 
 export const sagas = [
-    resetEffects, loadEffects, drawSaga, doneSaga,
+    resetEffects, loadEffects, doneSaga,
 ]
 
 export const load = (id) => ({ type: LOAD_REQUEST, payload: id })
-export const patch = (payload) => ({ type: PATCH, payload })
 export const draw = (payload) => ({ type: DRAW_REQUEST, payload })
 export const done = () => ({ type: DONE_REQUEST })
 export const play = () => ({ type: PLAY })
@@ -69,11 +64,3 @@ export const setSpeed = (payload) => ({ type: SET_SPEED, payload })
 export const setColor = (payload) => ({ type: SET_COLOR, payload })
 export const nextRound = () => ({ type: NEXT_ROUND })
 export const reset = () => ({type: RESET})
-
-function eq (a, b) {
-    if (a === b) { return true }
-    for (const key in a) {
-        if (a[key] !== b[key]) { return false }
-    }
-    return true
-}

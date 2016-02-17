@@ -1,44 +1,65 @@
-import { DRAW_REQUEST, DRAW, NEXT_ROUND, LOAD, RESET } from "constants"
-const DRAW_SELECTOR = "DRAW_SELECTOR"
+import { DRAW_SELECTOR, DRAW_REQUEST, DRAW, LOAD, RESET } from "constants"
+import { take, put } from "redux-saga/effects"
+import { select as selectT } from "store/transient"
+import { sleep } from "util/sleep"
+import { env } from "constants"
+
+const { maxSteps, width } = env
 
 const initState = {
     events: [],
+    frames: [],
 }
 
 export function reducer (state = initState, {type, payload}) {
-    if (action.type === RESET) { return initState }
+    if (type === RESET) { return initState }
     switch (type) {
     case DRAW:
-        return { events: [...state.events, payload ] }
+        return {
+            events: [...state.events, payload],
+            frames: addToFrame(state.frames, payload),
+        }
     case LOAD:
-        return { events: payload.events }
+        return {
+            events: payload.events,
+            frames: payload.events.reduce(addToFrame, []),
+        }
     }
     return state
 }
 
+export const selector = DRAW_SELECTOR
+
 export function select (state) {
-    const { events } = state[DRAW_SELECTOR]
+    const { frames } = state[DRAW_SELECTOR]
+    const { step, round } = selectT(state)
+    const currentIndex = frameForState(step, round)
+
+    return { frames, currentIndex }
 }
 
-
-function nextPixels ({step, color, decay, round, maxSteps}, pixels, payload) {
-    const thisRound = pixels[round]
-    const frameStep = step % maxSteps
-    const withNext = [
-        ...thisRound,
-        {...payload, step: frameStep, color, ttl: 2 ** (decay + 1)},
-    ]
-    const nextPixels = [...pixels]
-    nextPixels[round] = withNext
-    return nextPixels
-}
+export const sagas = [drawSaga]
 
 function * drawSaga (getState) {
-    let lastDraw = null
     while (true) {
         const { payload } = yield take(DRAW_REQUEST)
-        if (lastDraw && eq(lastDraw, payload)) { continue }
-        lastDraw = payload
-        yield put({ type: DRAW, payload })
+        const { step, round, decay, color } = selectT(getState())
+        const ttl = 2 ** (decay + 1)
+        const fullPayload = { ...payload, step, round, ttl, color }
+        yield put({ type: DRAW, payload: fullPayload })
+        yield sleep(50) // debounce
     }
+}
+
+const frameForState = (step, round) => step + (round * maxSteps)
+
+function addToFrame (frames, event) {
+    const { x, y, step, round, ttl, color } = event
+    for (let i = 0; i < ttl; i++) {
+        const f = frameForState(step + i, round)
+        const s = (y * width) + x
+        if (!frames[f]) frames[f] = []
+        frames[f][s] = { color }
+    }
+    return frames
 }

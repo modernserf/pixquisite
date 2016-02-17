@@ -1,11 +1,14 @@
 import {
     colorMap,
-    PLAY_SELECTOR, ENV_SELECTOR,
+    PLAY_SELECTOR,
     TICK, PLAY, STEP, DRAW, SEEK, SET_COLOR, RESET, SET_SPEED,
     NEXT_ROUND, DONE, LOAD,
 } from "constants"
 import { sleep } from "util/sleep"
-import { put } from "redux-saga"
+import { put } from "redux-saga/effects"
+import { env } from "constants"
+
+const { maxSteps, frameRate } = env
 
 const initState = {
     step: 0,
@@ -13,14 +16,36 @@ const initState = {
     decay: 2,
     mode: STEP,
     color: Object.keys(colorMap)[0],
+    colorStep: 0,
+}
+export function reducer (state = initState, action) {
+    if (action.type === RESET) { return initState }
+
+    return combineDependentReducers(state, action, {
+        step, mode, round, colorStep,
+        color: patchOn(SET_COLOR),
+        decay: patchOn(SET_SPEED),
+    })
+}
+
+export const selector = PLAY_SELECTOR
+
+export function select (state) {
+    return state[PLAY_SELECTOR]
+}
+
+export const sagas = [tick]
+
+function colorStep (state, {type}) {
+    return type === TICK ? state + 1 : state
 }
 
 function step (state, {type, payload}, {mode}) {
     switch (type) {
     case TICK:
-        return mode === PLAY ? (state + 1) : state
+        return mode === PLAY ? (state + 1) % maxSteps : state
     case DRAW:
-        return mode === STEP ? (state + 1) : state
+        return mode === STEP ? (state + 1) % maxSteps : state
     case NEXT_ROUND:
     case DONE:
     case LOAD:
@@ -57,37 +82,22 @@ function round (state, {type}) {
     return state
 }
 
-export function reducer (state = initState, action) {
-    if (action.type === RESET) { return initState }
-
-    return combineDependentReducers(state, action, {
-        step, mode, round,
-        color: patchOn(SET_COLOR),
-        decay: patchOn(SET_SPEED),
-    })
-}
-
 const patchOn = (matchType) => (prevState, {type, payload}) =>
     type === matchType ? payload : prevState
 
 function combineDependentReducers (state, action, subReducers) {
     for (const key in subReducers) {
-        const nextStateForKey = subReducers(state[key], action, state)
+        const nextStateForKey = subReducers[key](state[key], action, state)
         if (nextStateForKey !== state[key]) {
-            state = { ...state, key: nextStateForKey }
+            state = { ...state, [key]: nextStateForKey }
         }
     }
     return state
 }
 
-export const selector = PLAY_SELECTOR
-
 function * tick (getState) {
     while (true) {
         yield put({ type: TICK })
-        const { frameRate } = getState()[ENV_SELECTOR]
         yield sleep(1000 / frameRate)
     }
 }
-
-export const sagas = [tick]

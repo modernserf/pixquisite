@@ -1,15 +1,17 @@
 import React from "react"
 import { connect } from "react-redux"
-
+import { createSelector } from "reselect"
 import S from "./style.css"
-import { select } from "store"
+import { select as selectT } from "store/transient"
+import { select as selectDraw } from "store/draw"
 import { GridWithHandlers } from "view/Grid"
 import { Palette } from "view/Palette"
-import { PLAY } from "constants"
+import { env, PLAY } from "constants"
 import { touchClick } from "util/touch-click"
 import {
     play, step, seek, nextRound, done, setSpeed, setColor, draw,
 } from "actions"
+const { maxDecay, maxSteps } = env
 
 // TODO: should this reset on mount?
 export function ActiveGame () {
@@ -28,10 +30,14 @@ export function ActiveGame () {
     )
 }
 
-const GridController = connect(select, { draw })(GridWithHandlers)
-const PaletteController = connect(select, { setColor })(Palette)
+const GridController = connect(createSelector(
+(state) => selectT(state).colorStep,
+selectDraw,
+(colorStep, drawState) => ({...drawState, colorStep})),
+{ draw })(GridWithHandlers)
+const PaletteController = connect(selectT, { setColor })(Palette)
 
-const PlayToggle = connect(select, { play, step })(
+const PlayToggle = connect(selectT, { play, step })(
 function PlayToggle ({mode, play, step}) {
     const button = mode === PLAY
         ? <button type="button" {...touchClick(step)}>Step</button>
@@ -50,7 +56,7 @@ function Transport () {
     )
 }
 
-const Rounds = connect(select, { nextRound, done })(
+const Rounds = connect(selectT, { nextRound, done })(
 function Rounds ({ round, nextRound, done }) {
     return (
         <div>
@@ -60,8 +66,8 @@ function Rounds ({ round, nextRound, done }) {
     )
 })
 
-const Scrubber = connect(select, { seek })(
-function Scrubber ({maxSteps, step, seek}) {
+const Scrubber = connect(selectT, { seek })(
+function Scrubber ({step, seek}) {
     return (
         <div className={S.scrubber}>
             <input type="range"
@@ -72,8 +78,8 @@ function Scrubber ({maxSteps, step, seek}) {
     )
 })
 
-const SpeedScrubber = connect(select, { setSpeed })(
-function SpeedScrubber ({decay, maxDecay, setSpeed}) {
+const SpeedScrubber = connect(selectT, { setSpeed })(
+function SpeedScrubber ({decay, setSpeed}) {
     return (
         <div className={S.scrubber}>
             <input type="range"
