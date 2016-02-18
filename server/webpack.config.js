@@ -23,11 +23,9 @@ var htmlPlugin = new HtmlPlugin({
 
 var cssConfig = "css?modules&localIdentName=[path][name]---[local]---[hash:base64:5]"
 
-var polyfills = ["babel-polyfill", "whatwg-fetch"]
-
 var entry = isDev
-     ? ["webpack/hot/dev-server", ...polyfills, "./src/main.js"]
-     : [...polyfills, "./src/main.js"]
+     ? ["webpack/hot/dev-server", "babel-polyfill", "whatwg-fetch", "./src/main.js"]
+     : ["babel-polyfill", "whatwg-fetch", "./src/main.js"]
 
 var plugins = isDev
     ? [
