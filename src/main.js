@@ -5,7 +5,7 @@ import { syncHistory } from "react-router-redux"
 import sagaMiddleware from "redux-saga"
 import { reducer, sagas } from "store"
 import view from "view"
-import { ROUTE_SELECTOR } from "constants"
+import { selectors } from "constants"
 
 const routeMiddleware = syncHistory(browserHistory)
 
@@ -16,7 +16,7 @@ const store = createStore(
         window.devToolsExtension ? window.devToolsExtension() : (f) => f))
 
 routeMiddleware.listenForReplays(store,
-    (state) => state[ROUTE_SELECTOR].location)
+    (state) => state[selectors.route].location)
 
 document.addEventListener("DOMContentLoaded", () => {
     DOM.render(view(store, browserHistory),

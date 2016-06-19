@@ -6,11 +6,15 @@ import { select as selectT } from "store/transient"
 import { select as selectDraw } from "store/draw"
 import { GridWithHandlers } from "view/Grid"
 import { Palette } from "view/Palette"
-import { env, PLAY } from "constants"
+import { schema, env, playModes } from "constants"
 import { touchClick } from "util/touch-click"
-import {
-    play, step, seek, done, setSpeed, setColor, draw,
-} from "actions"
+
+const {
+    play, step, seek, setSpeed, setColor,
+    done_request: done,
+    draw_request: draw,
+} = schema.actionCreators
+
 const { maxDecay, maxSteps } = env
 
 // TODO: should this reset on mount?
@@ -39,7 +43,7 @@ const PaletteController = connect(selectT, { setColor })(Palette)
 
 const PlayToggle = connect(selectT, { play, step })(
 function PlayToggle ({mode, play, step}) {
-    const button = mode === PLAY
+    const button = mode === playModes.play
         ? <button type="button" {...touchClick(step)}>Step</button>
         : <button type="button" {...touchClick(play)}>Play</button>
     return (

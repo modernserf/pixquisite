@@ -1,45 +1,38 @@
-import { DRAW_SELECTOR, DRAW_REQUEST, DRAW, LOAD, RESET } from "constants"
+import { selectors, schema } from "constants"
 import { take, put } from "redux-saga/effects"
 import { select as selectT } from "store/transient"
 import { env } from "constants"
 
 const { maxSteps, width } = env
 
-const initState = {
+const makeInitState = () => ({
     events: [],
     frames: [], // note: this gets mutated!
-}
+})
 
-export function reducer (state = initState, {type, payload}) {
-    switch (type) {
-    case DRAW:
-        return {
-            events: [...state.events, payload],
-            frames: addToFrame(state.frames, payload),
-        }
-    case LOAD:
-        return {
-            events: payload.events,
-            frames: payload.events.reduce(addToFrame, []),
-        }
-    case RESET:
+export const reducer = schema.createReducer({
+    draw: (state, payload) => ({
+        events: [...state.events, payload],
+        frames: addToFrame(state.frames, payload),
+    }),
+    load: (state, { events }) => ({
+        events: events,
+        frames: events.reduce(addToFrame, []),
+    }),
+    reset: () => {
         console.log("reset")
-        return {
-            events: [],
-            frames: [],
-        }
-    }
-    return state
-}
+        return makeInitState()
+    },
+}, makeInitState())
 
-export const selector = DRAW_SELECTOR
+export const selector = selectors.draw
 
 export function selectSaved (state) {
-    return { events: state[DRAW_SELECTOR].events }
+    return { events: state[selectors.draw].events }
 }
 
 export function select (state) {
-    const { frames } = state[DRAW_SELECTOR]
+    const { frames } = state[selectors.draw]
     const { step } = selectT(state)
     const currentIndex = step % maxSteps
 
@@ -51,7 +44,7 @@ export const sagas = [drawSaga]
 function * drawSaga (getState) {
     let lastPayload = {}
     while (true) {
-        const { payload } = yield take(DRAW_REQUEST)
+        const { payload } = yield take("draw_request")
         const { step, decay, color } = selectT(getState())
         const ttl = 2 ** (decay + 1)
         const fullPayload = { ...payload, step, ttl, color }
@@ -64,7 +57,7 @@ function * drawSaga (getState) {
         }
         lastPayload = fullPayload
 
-        yield put({ type: DRAW, payload: fullPayload })
+        yield put({ type: "draw", payload: fullPayload })
     }
 }
 
