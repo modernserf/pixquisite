@@ -1,6 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import { env, colorMap } from "constants"
+import { env, colorMap } from "../../constants"
 const { width, height, resolution } = env
 
 import S from "./style.css"

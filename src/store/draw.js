@@ -1,7 +1,7 @@
 import { selectors, schema, env } from "../constants"
 import { take, put } from "redux-saga/effects"
 import { select as selectT } from "./transient"
-import { decodeString } from "../codec"
+import { decodeString } from "./codec"
 
 const { maxSteps, width } = env
 

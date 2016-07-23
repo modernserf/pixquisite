@@ -2,12 +2,12 @@ import React from "react"
 import { connect } from "react-redux"
 import { createSelector } from "reselect"
 import S from "./style.css"
-import { select as selectT } from "store/transient"
-import { select as selectDraw } from "store/draw"
-import { GridWithHandlers } from "view/Grid"
-import { Palette } from "view/Palette"
-import { schema, env, playModes } from "constants"
-import { touchClick } from "util/touch-click"
+import { select as selectT } from "../../store/transient"
+import { select as selectDraw } from "../../store/draw"
+import { GridWithHandlers } from "../Grid"
+import { Palette } from "../Palette"
+import { schema, env, playModes } from "../../constants"
+import { touchClick } from "../../util/touch-click"
 
 const {
     play, step, seek, setSpeed, setColor,

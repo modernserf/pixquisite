@@ -2,10 +2,10 @@ import React from "react"
 import { connect } from "react-redux"
 import { createSelector } from "reselect"
 import S from "./style.css"
-import { schema } from "constants"
-import { select as selectT } from "store/transient"
-import { select as selectDraw } from "store/draw"
-import { Grid } from "view/Grid"
+import { schema } from "../../constants"
+import { select as selectT } from "../../store/transient"
+import { select as selectDraw } from "../../store/draw"
+import { Grid } from "../Grid"
 
 const { load, reset } = schema.actionCreators
 

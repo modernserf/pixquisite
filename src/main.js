@@ -3,9 +3,9 @@ import { createStore, applyMiddleware, compose } from "redux"
 import { browserHistory } from "react-router"
 import { syncHistory } from "react-router-redux"
 import sagaMiddleware from "redux-saga"
-import { reducer, sagas } from "store"
-import view from "view"
-import { schema, selectors } from "constants"
+import { reducer, sagas } from "./store"
+import view from "./view"
+import { schema, selectors } from "./constants"
 
 const routeMiddleware = syncHistory(browserHistory)
 

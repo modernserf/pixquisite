@@ -1,7 +1,6 @@
-import { colorMap, selectors, playModes } from "constants"
-import { sleep } from "util/sleep"
+import { colorMap, selectors, playModes, env } from "../constants"
+import { sleep } from "../util/sleep"
 import { put } from "redux-saga/effects"
-import { env } from "constants"
 
 const { maxSteps, frameRate } = env
 

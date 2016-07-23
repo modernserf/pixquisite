@@ -1,4 +1,4 @@
-import { colorMap } from "./constants"
+import { colorMap } from "../constants"
 import base64 from "base64-js"
 
 // encode/decode the animation in a base64 binary string

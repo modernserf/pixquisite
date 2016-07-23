@@ -1,7 +1,7 @@
 import React from "react"
-import { touchClick } from "util/touch-click"
+import { touchClick } from "../../util/touch-click"
 import S from "./style.css"
-import { colorMap } from "constants"
+import { colorMap } from "../../constants"
 
 const fillStyle = (a, [r, g, b]) => `rgba(${r},${g},${b},${a})`
 
