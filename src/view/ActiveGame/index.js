@@ -34,23 +34,6 @@ const scrubberLabels = {
 
 const { maxDecay, maxSteps } = env
 
-// TODO: should this reset on mount?
-export function ActiveGame () {
-    return (
-        <div>
-            <div style={gridWrap}>
-                <GridController />
-                <PaletteController />
-            </div>
-            <div>
-                <Transport/>
-                <SpeedScrubber />
-                <Rounds/>
-            </div>
-        </div>
-    )
-}
-
 const GridController = connect(createSelector(
 (state) => selectT(state).colorStep,
 selectDraw,
@@ -68,6 +51,18 @@ function PlayToggle ({mode, play, step}) {
     )
 })
 
+const Scrubber = connect(selectT, { seek })(
+function Scrubber ({step, seek}) {
+    return (
+        <div style={scrubber}>
+            <input type="range"
+                min={0} max={maxSteps - 1}
+                value={step}
+                onChange={(e) => seek(Number(e.target.value))}/>
+        </div>
+    )
+})
+
 function Transport () {
     return (
         <div style={transport}>
@@ -82,18 +77,6 @@ function Rounds ({ round, done }) {
     return (
         <div>
             <button onClick={() => done()}>Done</button>
-        </div>
-    )
-})
-
-const Scrubber = connect(selectT, { seek })(
-function Scrubber ({step, seek}) {
-    return (
-        <div style={scrubber}>
-            <input type="range"
-                min={0} max={maxSteps - 1}
-                value={step}
-                onChange={(e) => seek(Number(e.target.value))}/>
         </div>
     )
 })
@@ -116,3 +99,20 @@ function SpeedScrubber ({decay, setSpeed}) {
         </div>
     )
 })
+
+// TODO: should this reset on mount?
+export function ActiveGame () {
+    return (
+        <div>
+            <div style={gridWrap}>
+                <GridController />
+                <PaletteController />
+            </div>
+            <div>
+                <Transport/>
+                <SpeedScrubber />
+                <Rounds/>
+            </div>
+        </div>
+    )
+}

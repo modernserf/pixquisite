@@ -15,9 +15,16 @@ const gridContainer = {
     alignItems: "center",
 }
 
+const GridController = connect(createSelector(
+(state) => selectT(state).colorStep,
+selectDraw,
+(colorStep, drawState) => ({...drawState, colorStep})))(Grid)
+
+
 export const CompleteGame = connect(() => ({}), {load, reset})(
 class CompleteGame extends React.Component {
     componentWillMount () {
+        console.log("this is OK")
         const { params: { gameID }, load } = this.props
         load(gameID)
     }
@@ -33,8 +40,3 @@ class CompleteGame extends React.Component {
         )
     }
 })
-
-const GridController = connect(createSelector(
-(state) => selectT(state).colorStep,
-selectDraw,
-(colorStep, drawState) => ({...drawState, colorStep})))(Grid)

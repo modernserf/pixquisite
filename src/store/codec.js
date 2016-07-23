@@ -34,11 +34,11 @@ export function encodeString (events) {
         b.push.apply(b, encodeEvent(e))
         return b
     }, [])
-    return base64.fromByteArray(bytes).replace("/", "_")
+    return base64.fromByteArray(bytes).replace(/\//g, "_")
 }
 
 export function decodeString (str) {
-    const buf = base64.toByteArray(str.replace("_", "/"))
+    const buf = base64.toByteArray(str.replace(/_/g, "/"))
     const res = []
 
     for (let i = 0; i < buf.length; i += 3) {
