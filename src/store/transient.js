@@ -2,9 +2,6 @@ import { colorMap, selectors, playModes, env } from "../constants"
 import { sleep } from "../util/sleep"
 import { put } from "redux-saga/effects"
 
-import regeneratorRuntime from "regenerator-runtime-only"
-window.regeneratorRuntime = regeneratorRuntime
-
 const { maxSteps, frameRate } = env
 
 const patchOn = (matchType) => (prevState, {type, payload}) =>

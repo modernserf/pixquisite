@@ -13,9 +13,11 @@
   },
   "homepage": "https://github.com/modernserf/pixquisite#readme",
   "devDependencies": {
+    "gh-pages-deploy": "^0.4.2",
     "react-scripts": "0.1.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.9.1",
     "base64-js": "^1.1.2",
     "history": "^1.17.0",
     "react": "^15.2.1",
@@ -26,13 +28,26 @@
     "redux": "^3.3.1",
     "redux-action-schema": "^0.7.0",
     "redux-saga": "^0.8.2",
-    "regenerator-runtime-only": "^0.8.38",
     "reselect": "^2.0.3",
     "shortid": "^2.2.4"
+  },
+  "gh-pages-deploy": {
+    "staticpath": "build",
+    "cname": "pixquisite.club",
+    "prep": [
+      "build",
+      "optimize-img"
+    ],
+    "post": [
+      "clean-source"
+    ],
+    "noprompt": false
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "./node_modules/.bin gh-pages-deploy",
+    "clean-source": "rm -r build"
   }
 }

@@ -1,3 +1,4 @@
+import "babel-polyfill"
 import DOM from "react-dom"
 import { createStore, applyMiddleware, compose } from "redux"
 import { hashHistory } from "react-router"
@@ -6,8 +7,6 @@ import sagaMiddleware from "redux-saga"
 import { reducer, sagas } from "./store"
 import view from "./view"
 import { schema, selectors } from "./constants"
-
-
 
 const routeMiddleware = syncHistory(hashHistory)
 
