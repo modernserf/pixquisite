@@ -100,8 +100,8 @@ function drawPixel (ctx, x, y, px, colorStep = 0, alpha = 1) {
     ctx.fillStyle = fillStyle(alpha, color[colorStep % color.length])
     // draw with 1px padding
     ctx.fillRect(
-        1 + x * resolution,
-        1 + y * resolution,
+        1 + (x * resolution),
+        1 + (y * resolution),
         resolution - 2,
         resolution - 2)
 }

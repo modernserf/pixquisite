@@ -2,7 +2,13 @@ import { colorMap, selectors, playModes, env } from "../constants"
 import { sleep } from "../util/sleep"
 import { put } from "redux-saga/effects"
 
+import regeneratorRuntime from "regenerator-runtime-only"
+window.regeneratorRuntime = regeneratorRuntime
+
 const { maxSteps, frameRate } = env
+
+const patchOn = (matchType) => (prevState, {type, payload}) =>
+    type === matchType ? payload : prevState
 
 const initState = {
     step: 0,
@@ -44,8 +50,9 @@ function step (state, {type, payload}, {mode}) {
         return 0
     case "seek":
         return payload
+    default:
+        return state
     }
-    return state
 }
 
 function mode (state, {type}) {
@@ -57,20 +64,18 @@ function mode (state, {type}) {
     case "play":
     case "load":
         return playModes.play
+    default:
+        return state
     }
-    return state
 }
 
-const patchOn = (matchType) => (prevState, {type, payload}) =>
-    type === matchType ? payload : prevState
-
 function combineDependentReducers (state, action, subReducers) {
-    for (const key in subReducers) {
+    Object.keys(subReducers).forEach((key) => {
         const nextStateForKey = subReducers[key](state[key], action, state)
         if (nextStateForKey !== state[key]) {
             state = { ...state, [key]: nextStateForKey }
         }
-    }
+    })
     return state
 }
 

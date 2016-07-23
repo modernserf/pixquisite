@@ -1,13 +1,15 @@
 import DOM from "react-dom"
 import { createStore, applyMiddleware, compose } from "redux"
-import { browserHistory } from "react-router"
+import { hashHistory } from "react-router"
 import { syncHistory } from "react-router-redux"
 import sagaMiddleware from "redux-saga"
 import { reducer, sagas } from "./store"
 import view from "./view"
 import { schema, selectors } from "./constants"
 
-const routeMiddleware = syncHistory(browserHistory)
+
+
+const routeMiddleware = syncHistory(hashHistory)
 
 const store = createStore(
     reducer,
@@ -22,6 +24,6 @@ routeMiddleware.listenForReplays(store,
     (state) => state[selectors.route].location)
 
 document.addEventListener("DOMContentLoaded", () => {
-    DOM.render(view(store, browserHistory),
+    DOM.render(view(store, hashHistory),
     document.getElementById("app"))
 })
