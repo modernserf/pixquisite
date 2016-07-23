@@ -7,7 +7,7 @@ import { select as selectT } from "store/transient"
 import { select as selectDraw } from "store/draw"
 import { Grid } from "view/Grid"
 
-const { load_request: load, reset } = schema.actionCreators
+const { load, reset } = schema.actionCreators
 
 export const CompleteGame = connect(() => ({}), {load, reset})(
 class CompleteGame extends React.Component {
@@ -22,7 +22,7 @@ class CompleteGame extends React.Component {
                 <GridController/>
                 <p>You can share this link.</p>
                 <button type="button"
-                    onClick={reset}>Play Again</button>
+                    onClick={() => reset()}>Play Again</button>
             </div>
         )
     }

@@ -1,9 +1,9 @@
-import makeSchema, { types as t } from "schema-builder"
+import { createSchema, types as t } from "redux-action-schema"
 import enum from "./util/enum"
 
 export const localStorageKey = "pixquisite-v5"
 
-export const schema = makeSchema([
+export const schema = createSchema([
     ["tick", "game clock signal"],
     ["play", "set play mode to playing"],
     ["step", "set play mode to stepping"],
@@ -14,7 +14,7 @@ export const schema = makeSchema([
         ["x", t.Number],
         ["y", t.Number],
         ["step", t.Number],
-        ["ttl", t.Number],
+        ["decay", t.Number],
         ["color", t.String]],
     ["seek", "move the play head to position", t.Number],
     ["setColor", "set draw color", t.String],
@@ -22,8 +22,7 @@ export const schema = makeSchema([
     ["done_request"],
     ["done", "save animation, go to sharing URL"],
     ["reset", "clear animation, go to play screen"],
-    ["load_request", "get animation stored at id", t.String],
-    ["load", "load animation", t.Object],
+    ["load", "load animation", t.String],
 ])
 
 export const playModes = enum(["play", "step"])

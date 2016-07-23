@@ -5,14 +5,17 @@ import { syncHistory } from "react-router-redux"
 import sagaMiddleware from "redux-saga"
 import { reducer, sagas } from "store"
 import view from "view"
-import { selectors } from "constants"
+import { schema, selectors } from "constants"
 
 const routeMiddleware = syncHistory(browserHistory)
 
 const store = createStore(
     reducer,
     compose(
-        applyMiddleware(routeMiddleware, sagaMiddleware(...sagas)),
+        applyMiddleware(
+            routeMiddleware,
+            sagaMiddleware(...sagas),
+            schema.createMiddleware()),
         window.devToolsExtension ? window.devToolsExtension() : (f) => f))
 
 routeMiddleware.listenForReplays(store,

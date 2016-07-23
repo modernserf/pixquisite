@@ -12,8 +12,8 @@ var devServer = new DevServer(webpack(config), {
     hot: true,
     historyApiFallback: true,
     proxy: {
-        "/game*": "http://localhost:3000",
+        "/game*": "http://localhost:3001",
     },
 })
 
-devServer.listen(8088)
+devServer.listen(3000)

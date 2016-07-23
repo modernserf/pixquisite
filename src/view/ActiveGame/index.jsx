@@ -64,7 +64,7 @@ const Rounds = connect(selectT, { done })(
 function Rounds ({ round, done }) {
     return (
         <div>
-            <button onClick={done}>Done</button>
+            <button onClick={() => done()}>Done</button>
         </div>
     )
 })

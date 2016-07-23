@@ -1,7 +1,7 @@
-import { selectors, schema } from "constants"
+import { selectors, schema, env } from "../constants"
 import { take, put } from "redux-saga/effects"
-import { select as selectT } from "store/transient"
-import { env } from "constants"
+import { select as selectT } from "./transient"
+import { decodeString } from "../codec"
 
 const { maxSteps, width } = env
 
@@ -15,12 +15,14 @@ export const reducer = schema.createReducer({
         events: [...state.events, payload],
         frames: addToFrame(state.frames, payload),
     }),
-    load: (state, { events }) => ({
-        events: events,
-        frames: events.reduce(addToFrame, []),
-    }),
+    load: (state, str) => {
+        const events = decodeString(str)
+        return {
+            events: events,
+            frames: events.reduce(addToFrame, []),
+        }
+    },
     reset: () => {
-        console.log("reset")
         return makeInitState()
     },
 }, makeInitState())
@@ -46,13 +48,12 @@ function * drawSaga (getState) {
     while (true) {
         const { payload } = yield take("draw_request")
         const { step, decay, color } = selectT(getState())
-        const ttl = 2 ** (decay + 1)
-        const fullPayload = { ...payload, step, ttl, color }
+        const fullPayload = { ...payload, step, decay, color }
 
         if (lastPayload.x === fullPayload.x &&
             lastPayload.y === fullPayload.y &&
             lastPayload.color === fullPayload.color &&
-            lastPayload.ttl === fullPayload.ttl) {
+            lastPayload.decay === fullPayload.decay) {
             continue
         }
         lastPayload = fullPayload
@@ -63,7 +64,9 @@ function * drawSaga (getState) {
 
 function addToFrame (frames, event) {
     const nextFrames = [...frames]
-    const { x, y, step, ttl, color } = event
+    const { x, y, step, decay, color } = event
+    const ttl = 2 ** (decay + 1)
+
     for (let i = 0; i < ttl; i++) {
         const f = (step + i) % maxSteps
         const s = (y * width) + x
