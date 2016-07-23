@@ -1,13 +1,19 @@
 import React from "react"
 import { connect } from "react-redux"
 import { createSelector } from "reselect"
-import S from "./style.css"
 import { schema } from "../../constants"
 import { select as selectT } from "../../store/transient"
 import { select as selectDraw } from "../../store/draw"
 import { Grid } from "../Grid"
 
 const { load, reset } = schema.actionCreators
+
+const gridContainer = {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+}
 
 export const CompleteGame = connect(() => ({}), {load, reset})(
 class CompleteGame extends React.Component {
@@ -18,7 +24,7 @@ class CompleteGame extends React.Component {
     render () {
         const { reset } = this.props
         return (
-            <div className={S.grid_container}>
+            <div style={gridContainer}>
                 <GridController/>
                 <p>You can share this link.</p>
                 <button type="button"

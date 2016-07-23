@@ -1,41 +1,41 @@
-.container {
+.home-container {
     margin: 0 auto;
     padding: 0 24px;
 }
 
-.container p {
+.home-container p {
     line-height: 1.4;
     margin-bottom: 12px;
 }
 
-.header {
+.home-header {
     text-align: center;
     padding: 24px 0;
 }
 
-.credits_header {
+.credits-header {
     font-size: 24px;
     line-height: 32px;
     font-weight: bold;
 }
 
-.title {
+.home-title {
     font-size: 32px;
     line-height: 48px;
     font-weight: bold;
 }
 
-.example {
+.home-example {
     max-width: 400px;
     margin: 0 auto;
 }
 
-.play_link_wrap {
+.play-link-wrap {
     text-align: center;
     margin: 12px auto;
 }
 
-.play_link {
+.play-link {
     display: inline-block;
     font-size: 32px;
     color: white;
@@ -44,14 +44,14 @@
     padding: 12px 32px;
 }
 
-.github_link {
+.github-link {
     display: none;
     position: absolute;
     top: 0;
     right: 0;
 }
 @media (min-width: 600px) {
-    .github_link {
+    .github-link {
         display: block;
     }
 }

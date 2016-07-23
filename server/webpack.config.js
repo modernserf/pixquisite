@@ -21,8 +21,6 @@ var htmlPlugin = new HtmlPlugin({
     hash: true,
 })
 
-var cssConfig = "css?modules&localIdentName=[path][name]---[local]---[hash:base64:5]"
-
 var entry = isDev
      ? ["webpack/hot/dev-server", "babel-polyfill", "whatwg-fetch", "./src/main.js"]
      : ["babel-polyfill", "whatwg-fetch", "./src/main.js"]
@@ -50,7 +48,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            {test: /\.css$/, loaders: ["style", cssConfig, "postcss"]},
+            {test: /\.css$/, loaders: ["style", "css", "postcss"]},
             {test: /\.js$/, exclude: /node_modules/, loader: "babel"},
             {test: /\.jsx$/, loader: "babel"},
             {test: /\.json$/, loader: "json"},

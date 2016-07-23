@@ -3,7 +3,11 @@ import ReactDOM from "react-dom"
 import { env, colorMap } from "../../constants"
 const { width, height, resolution } = env
 
-import S from "./style.css"
+const canvasStyle = {
+    border: "1px solid black",
+    cursor: "crosshair",
+    backgroundColor: "white",
+}
 
 export class Grid extends React.Component {
     componentWillUpdate (nextProps) {
@@ -16,7 +20,7 @@ export class Grid extends React.Component {
     render () {
         return (
             <canvas ref={(el) => this.setContext(el)}
-                className={S.canvas}
+                style={canvasStyle}
                 width={width * resolution}
                 height={height * resolution}/>
         )

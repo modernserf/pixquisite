@@ -1,7 +1,6 @@
 import React from "react"
 import { connect } from "react-redux"
 import { createSelector } from "reselect"
-import S from "./style.css"
 import { select as selectT } from "../../store/transient"
 import { select as selectDraw } from "../../store/draw"
 import { GridWithHandlers } from "../Grid"
@@ -15,17 +14,35 @@ const {
     draw_request: draw,
 } = schema.actionCreators
 
+const row = {
+    display: "flex",
+    flexDirection: "row",
+}
+
+const gridWrap = row
+const transport = row
+const scrubber = {
+    flexGrow: 1,
+    maxWidth: 400,
+    margin: "0 24px",
+}
+
+const scrubberLabels = {
+    ...row,
+    justifyContent: "space-between",
+}
+
 const { maxDecay, maxSteps } = env
 
 // TODO: should this reset on mount?
 export function ActiveGame () {
     return (
-        <div className={S.main}>
-            <div className={S.grid_wrap}>
+        <div>
+            <div style={gridWrap}>
                 <GridController />
                 <PaletteController />
             </div>
-            <div className={S.control_group}>
+            <div>
                 <Transport/>
                 <SpeedScrubber />
                 <Rounds/>
@@ -53,7 +70,7 @@ function PlayToggle ({mode, play, step}) {
 
 function Transport () {
     return (
-        <div className={S.transport}>
+        <div style={transport}>
             <PlayToggle />
             <Scrubber />
         </div>
@@ -72,7 +89,7 @@ function Rounds ({ round, done }) {
 const Scrubber = connect(selectT, { seek })(
 function Scrubber ({step, seek}) {
     return (
-        <div className={S.scrubber}>
+        <div style={scrubber}>
             <input type="range"
                 min={0} max={maxSteps - 1}
                 value={step}
@@ -84,7 +101,7 @@ function Scrubber ({step, seek}) {
 const SpeedScrubber = connect(selectT, { setSpeed })(
 function SpeedScrubber ({decay, setSpeed}) {
     return (
-        <div className={S.scrubber}>
+        <div style={scrubber}>
             <input type="range"
                 min={0} max={maxDecay}
                 value={decay}
@@ -92,7 +109,7 @@ function SpeedScrubber ({decay, setSpeed}) {
                     e.preventDefault()
                     setSpeed(Number(e.target.value))
                 }}/>
-            <div className={S.scrubber_labels}>
+            <div style={scrubberLabels}>
                 <span >fast</span>
                 <span >slow</span>
             </div>
