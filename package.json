@@ -28,6 +28,7 @@
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
     "react-redux": "^4.4.5",
+    "redeclare": "^0.2.0",
     "redux": "^3.3.1",
     "redux-action-schema": "^0.7.0",
     "redux-antirouter": "^1.2.0",
@@ -38,6 +39,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src/"
   }
 }

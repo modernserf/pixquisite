@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { env, colorMap } from "../../constants";
 const { width, height, resolution } = env;
 
@@ -47,8 +46,7 @@ export class GridWithHandlers extends React.Component {
         window.removeEventListener("resize", this.setClientRect);
     }
     setClientRect() {
-        const el = ReactDOM.findDOMNode(this);
-        this.setState({ position: el.getBoundingClientRect() });
+        this.setState({ position: this._el.getBoundingClientRect() });
     }
     onDrawStart(e) {
         e.preventDefault();
@@ -92,7 +90,12 @@ export class GridWithHandlers extends React.Component {
         };
 
         return (
-            <div {...handlers}>
+            <div
+                {...handlers}
+                ref={el => {
+                    this._el = el;
+                }}
+            >
                 <Grid {...this.props} />
             </div>
         );
