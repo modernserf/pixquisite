@@ -20,9 +20,11 @@ export const schema = createSchema([
     ["setColor", "set draw color", t.String],
     ["setSpeed", "set draw ttl", t.Number],
     ["done_request"],
-    ["done", "save animation, go to sharing URL"],
+    ["done", "save animation, go to sharing URL", t.String],
     ["reset", "clear animation, go to play screen"],
     ["load", "load animation", t.String],
+    ["route_changed",t.Object],
+    ["to_play"],
 ])
 
 export const playModes = enum(["play", "step"])

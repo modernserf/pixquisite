@@ -1,5 +1,5 @@
 import React from "react"
-import { Link } from "react-router"
+import { Link } from "redux-antirouter"
 import "./style.css"
 
 export function Home () {
@@ -14,7 +14,7 @@ export function Home () {
                     TODO: an example animation
                 </div>
                 <div className="play-link-wrap">
-                    <Link to="/play" className="play-link">
+                    <Link action={{ type: "to_play" }} className="play-link">
                         Play!
                     </Link>
                 </div>

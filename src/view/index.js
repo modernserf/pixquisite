@@ -1,6 +1,6 @@
 import React from "react"
-import { Provider } from "react-redux"
-import { Router, IndexRoute, Route } from "react-router"
+import { Provider, connect } from "react-redux"
+import { LinkProvider } from "redux-antirouter"
 
 import "./reset.css"
 import "./style.css"
@@ -8,16 +8,26 @@ import { Home } from "./Home"
 import { ActiveGame } from "./ActiveGame"
 import { CompleteGame } from "./CompleteGame"
 
-export default function (store, history) {
+const routes = [
+    { route: undefined, component: Home },
+    { route: "play", component: ActiveGame },
+    { route: "view", component: CompleteGame }
+]
+
+const Router = connect((state) => state.route)(
+    ({ path, location }) => {
+        const route = path[0]
+        const Component = routes.find((r) => r.route === route).component
+        return <Component />
+    }
+)
+
+export default function (store, rootReducer) {
     return (
         <Provider store={store}>
-            <Router history={history}>
-                <Route path="/">
-                    <IndexRoute component={Home}/>
-                    <Route path="/play" component={ActiveGame}/>
-                    <Route path="/watch/:gameID" component={CompleteGame}/>
-                </Route>
-            </Router>
+            <LinkProvider selectRoute={(state) => state.route} rootReducer={rootReducer}>
+                <Router />
+            </LinkProvider>
         </Provider>
     )
 }

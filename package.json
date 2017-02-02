@@ -18,14 +18,13 @@
   "dependencies": {
     "babel-polyfill": "^6.9.1",
     "base64-js": "^1.1.2",
-    "history": "^1.17.0",
+    "history": "^4.5.1",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
     "react-redux": "^4.4.5",
-    "react-router": "^2.0.0",
-    "react-router-redux": "^3.0.0",
     "redux": "^3.3.1",
     "redux-action-schema": "^0.7.0",
+    "redux-antirouter": "^1.2.0",
     "redux-saga": "^0.8.2",
     "reselect": "^2.0.3",
     "shortid": "^2.2.4"

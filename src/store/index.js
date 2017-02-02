@@ -1,4 +1,3 @@
-import { routeActions, routeReducer } from "react-router-redux"
 import { combineReducers } from "redux"
 import { take, put } from "redux-saga/effects"
 import { selectors } from "../constants"
@@ -15,21 +14,27 @@ import {
 } from "./transient"
 import { encodeString } from "./codec"
 
-function * resetEffects () {
-    while (true) {
-        yield take("reset")
-        yield put(routeActions.push("/play"))
-    }
-}
-
 function * doneSaga (getState) {
     while (true) {
         yield take("done_request")
         const { events } = selectSaved(getState())
         const id = encodeString(events)
 
-        yield put({ type: "done" })
-        yield put(routeActions.push(`/watch/${id}`))
+        yield put({ type: "done" , payload: id })
+    }
+}
+
+function routeReducer (state = {}, { type, payload }) {
+    switch (type) {
+    case "route_changed":
+        return payload
+    case "to_play":
+    case "reset":
+        return { query: {}, path: ['play'] }
+    case "done":
+        return { query: {}, path: ['view',payload] }
+    default:
+        return state
     }
 }
 
@@ -39,4 +44,4 @@ export const reducer = combineReducers({
     [tSelector]: tReducer,
 })
 
-export const sagas = [...drawSagas, ...tSagas, resetEffects, doneSaga]
+export const sagas = [...drawSagas, ...tSagas, doneSaga]

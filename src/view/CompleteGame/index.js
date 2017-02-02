@@ -21,11 +21,10 @@ selectDraw,
 (colorStep, drawState) => ({...drawState, colorStep})))(Grid)
 
 
-export const CompleteGame = connect(() => ({}), {load, reset})(
+export const CompleteGame = connect((state) => ({ route: state.route }), {load, reset})(
 class CompleteGame extends React.Component {
     componentWillMount () {
-        console.log("this is OK")
-        const { params: { gameID }, load } = this.props
+        const { route: { path: [_,gameID] }, load } = this.props
         load(gameID)
     }
     render () {
