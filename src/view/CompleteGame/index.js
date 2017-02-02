@@ -1,41 +1,36 @@
-import React from "react"
-import { connect } from "react-redux"
-import { createSelector } from "reselect"
-import { schema } from "../../constants"
-import { select as selectT } from "../../store/transient"
-import { select as selectDraw } from "../../store/draw"
-import { Grid } from "../Grid"
-
-const { load, reset } = schema.actionCreators
+import React from "react";
+import { connect } from "../../store";
+import { Grid } from "../Grid";
 
 const gridContainer = {
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-}
+    alignItems: "center"
+};
 
-const GridController = connect(createSelector(
-(state) => selectT(state).colorStep,
-selectDraw,
-(colorStep, drawState) => ({...drawState, colorStep})))(Grid)
+// selectT(state).colorStep, selectDraw, (colorStep, drawState) => Object.assign({}, drawState, { colorStep }))
 
+const GridController = connect(["grid"], {})(({ grid }) => <Grid {...grid} />);
 
-export const CompleteGame = connect((state) => ({ route: state.route }), {load, reset})(
-class CompleteGame extends React.Component {
-    componentWillMount () {
-        const { route: { path: [_,gameID] }, load } = this.props
-        load(gameID)
+export const CompleteGame = connect(["route"], ["load", "reset"])(
+    class CompleteGame extends React.Component {
+        componentWillMount() {
+            const { route: { path: [, gameID] }, load } = this.props;
+            // TODO: pure selector
+            load(gameID);
+        }
+        render() {
+            const { reset } = this.props;
+            return (
+                <div style={gridContainer}>
+                    <GridController />
+                    <p>You can share this link.</p>
+                    <button type="button" onClick={() => reset()}>
+                        Play Again
+                    </button>
+                </div>
+            );
+        }
     }
-    render () {
-        const { reset } = this.props
-        return (
-            <div style={gridContainer}>
-                <GridController/>
-                <p>You can share this link.</p>
-                <button type="button"
-                    onClick={() => reset()}>Play Again</button>
-            </div>
-        )
-    }
-})
+);

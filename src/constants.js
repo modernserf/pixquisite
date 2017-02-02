@@ -1,35 +1,10 @@
-import { createSchema, types as t } from "redux-action-schema"
-import enum from "./util/enum"
+import createEnum from "./util/enum";
 
-export const localStorageKey = "pixquisite-v5"
+export const localStorageKey = "pixquisite-v5";
 
-export const schema = createSchema([
-    ["tick", "game clock signal"],
-    ["play", "set play mode to playing"],
-    ["step", "set play mode to stepping"],
-    ["draw_request", "x and y coordinates for drawing pixel",
-        ["x", t.Number],
-        ["y", t.Number]],
-    ["draw", "write a pixel to the animation with the current pixel settings",
-        ["x", t.Number],
-        ["y", t.Number],
-        ["step", t.Number],
-        ["decay", t.Number],
-        ["color", t.String]],
-    ["seek", "move the play head to position", t.Number],
-    ["setColor", "set draw color", t.String],
-    ["setSpeed", "set draw ttl", t.Number],
-    ["done_request"],
-    ["done", "save animation, go to sharing URL", t.String],
-    ["reset", "clear animation, go to play screen"],
-    ["load", "load animation", t.String],
-    ["route_changed",t.Object],
-    ["to_play"],
-])
+export const playModes = createEnum(["play", "step"]);
 
-export const playModes = enum(["play", "step"])
-
-export const selectors = enum(["play", "draw", "route"])
+export const selectors = createEnum(["play", "draw", "route"]);
 
 export const env = {
     width: 16,
@@ -37,8 +12,8 @@ export const env = {
     maxDecay: 4,
     maxSteps: 32,
     resolution: 24, // css px per cell
-    frameRate: 12,
-}
+    frameRate: 12
+};
 
 const c = {
     black: [20, 20, 20],
@@ -52,15 +27,14 @@ const c = {
     purple: [127, 0, 127],
     cyan: [127, 127, 255],
     lime: [0, 255, 0],
-    lavender: [255, 127, 255],
-}
+    lavender: [255, 127, 255]
+};
 
 // map color name to cycle
 // most colors are single-item cycle
-export const colorMap = enum([
-    "black", "white", "red", "blue", "green", "orange", "purple",
-], (key) => [c[key]])
+export const colorMap = createEnum(
+    ["black", "white", "red", "blue", "green", "orange", "purple"],
+    key => [c[key]]
+);
 
-colorMap.rainbow = [
-    c.pink, c.orange, c.yellow, c.lime, c.cyan, c.lavender,
-]
+colorMap.rainbow = [c.pink, c.orange, c.yellow, c.lime, c.cyan, c.lavender];

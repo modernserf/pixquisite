@@ -1,27 +1,30 @@
-import "babel-polyfill"
-import DOM from "react-dom"
-import { createStore, applyMiddleware, compose } from "redux"
-import { createRouterMiddleware } from "redux-antirouter"
-import sagaMiddleware from "redux-saga"
-import { reducer, sagas } from "./store"
-import view from "./view"
-import { schema, selectors } from "./constants"
-
+import "babel-polyfill";
+import DOM from "react-dom";
+import { createStore, applyMiddleware, compose } from "redux";
+import { createRouterMiddleware } from "redux-antirouter";
+import sagaMiddleware from "redux-saga";
+import { schema, sagas } from "./store";
+import view from "./view";
 
 const routeMiddleware = createRouterMiddleware({
-    onChange: (location) => schema.actionCreators.route_changed(location),
-    selectRoute: (state) => state[selectors.route],
-})
+    onChange: location => schema.actions.routeChanged(location),
+    selectRoute: schema.selectors.route
+});
+
+const composeEnhancers = process.env.NODE_ENV !== "production" &&
+    typeof window === "object" &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+            actionsBlacklist: ["tick", "EFFECT_RESOLVED", "EFFECT_TRIGGERED"]
+            // Specify extension’s options like name, actionsBlacklist, actionsCreators or immutablejs support if needed
+        })
+    : compose;
 
 const store = createStore(
-    reducer,
-    compose(
-        applyMiddleware(
-            routeMiddleware,
-            sagaMiddleware(...sagas)),
-        window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : (f) => f))
+    schema.reducer,
+    composeEnhancers(applyMiddleware(routeMiddleware, sagaMiddleware(...sagas)))
+);
 
 document.addEventListener("DOMContentLoaded", () => {
-    DOM.render(view(store, reducer),
-    document.getElementById("app"))
-})
+    DOM.render(view(store, schema.reducer), document.getElementById("app"));
+});

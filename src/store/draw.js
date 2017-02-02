@@ -1,77 +1,52 @@
-import { selectors, schema, env } from "../constants"
-import { take, put } from "redux-saga/effects"
-import { select as selectT } from "./transient"
-import { decodeString } from "./codec"
+import { env } from "../constants";
+import { reducer, selector } from "redeclare";
+import { decodeString } from "./codec";
 
-const { maxSteps, width } = env
+const { maxSteps, width } = env;
 
 const makeInitState = () => ({
     events: [],
-    frames: [], // note: this gets mutated!
-})
+    frames: [] // note: this gets mutated!
+});
 
-export const reducer = schema.createReducer({
-    draw: (state, payload) => ({
-        events: [...state.events, payload],
-        frames: addToFrame(state.frames, payload),
-    }),
-    load: (state, str) => {
-        const events = decodeString(str)
-        return {
-            events: events,
-            frames: events.reduce(addToFrame, []),
-        }
+export const draw = reducer(
+    {
+        draw: (state, { payload }) => ({
+            events: [...state.events, payload],
+            frames: addToFrame(state.frames, payload)
+        }),
+        load: (state, { id }) => {
+            const events = decodeString(id);
+            return {
+                events: events,
+                frames: events.reduce(addToFrame, [])
+            };
+        },
+        reset: makeInitState
     },
-    reset: () => {
-        return makeInitState()
-    },
-}, makeInitState())
+    makeInitState()
+);
 
-export const selector = selectors.draw
+export const drawEvents = selector("draw", draw => draw.events);
 
-export function selectSaved (state) {
-    return { events: state[selectors.draw].events }
-}
+export const drawFrames = selector("draw", "transients", (
+    { frames },
+    { step }
+) => {
+    const currentIndex = step % maxSteps;
+    return { frames, currentIndex };
+});
 
-export function select (state) {
-    const { frames } = state[selectors.draw]
-    const { step } = selectT(state)
-    const currentIndex = step % maxSteps
-
-    return { frames, currentIndex }
-}
-
-export const sagas = [drawSaga]
-
-function * drawSaga (getState) {
-    let lastPayload = {}
-    while (true) {
-        const { payload } = yield take("draw_request")
-        const { step, decay, color } = selectT(getState())
-        const fullPayload = { ...payload, step, decay, color }
-
-        if (lastPayload.x === fullPayload.x &&
-            lastPayload.y === fullPayload.y &&
-            lastPayload.color === fullPayload.color &&
-            lastPayload.decay === fullPayload.decay) {
-            continue
-        }
-        lastPayload = fullPayload
-
-        yield put({ type: "draw", payload: fullPayload })
-    }
-}
-
-function addToFrame (frames, event) {
-    const nextFrames = [...frames]
-    const { x, y, step, decay, color } = event
-    const ttl = 2 ** (decay + 1)
+function addToFrame(frames, event) {
+    const nextFrames = [...frames];
+    const { x, y, step, decay, color } = event;
+    const ttl = 2 ** (decay + 1);
 
     for (let i = 0; i < ttl; i++) {
-        const f = (step + i) % maxSteps
-        const s = (y * width) + x
-        if (!nextFrames[f]) nextFrames[f] = []
-        nextFrames[f][s] = { color }
+        const f = (step + i) % maxSteps;
+        const s = y * width + x;
+        if (!nextFrames[f]) nextFrames[f] = [];
+        nextFrames[f][s] = { color };
     }
-    return nextFrames
+    return nextFrames;
 }

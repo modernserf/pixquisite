@@ -13,12 +13,18 @@
   },
   "homepage": "https://github.com/modernserf/pixquisite#readme",
   "devDependencies": {
+    "eslint": "^3.14.1",
+    "eslint-config-prettier": "^1.0.2",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-prettier": "^2.0.0",
+    "eslint-plugin-react": "^6.7.1",
     "react-scripts": "0.1.0"
   },
   "dependencies": {
     "babel-polyfill": "^6.9.1",
     "base64-js": "^1.1.2",
     "history": "^4.5.1",
+    "prettier": "^0.14.1",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
     "react-redux": "^4.4.5",
