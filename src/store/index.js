@@ -1,5 +1,5 @@
-import { createConnector, createSchema, reducer, selector } from "redeclare";
-import { connect as reduxConnect } from "react-redux";
+const { createConnector, createSchema, selector } = require("redeclare");
+const { connect: reduxConnect } = require("react-redux");
 import { draw, drawEvents, drawFrames } from "./draw";
 import { transients } from "./transient";
 import { encodeString } from "./codec";
@@ -17,21 +17,9 @@ export const schema = createSchema(
         setColor: ["color"], // set draw color
         setSpeed: ["speed"], // set draw ttl
         done: doneThunk, // save animation, go to sharing URL
-        reset: [], // clear animation, go to play screen
-        load: ["id"], // load animation from URL
-        routeChanged: ["location"],
-        toPlay: []
+        load: ["id"] // load animation from URL
     },
     {
-        route: reducer(
-            {
-                routeChanged: (state, { location }) => location,
-                toPlay: () => ({ query: {}, path: ["play"] }),
-                reset: () => ({ query: {}, path: ["play"] }),
-                done: (state, { id }) => ({ query: {}, path: ["view", id] })
-            },
-            {}
-        ),
         draw,
         drawEvents,
         drawFrames,
@@ -68,7 +56,10 @@ function doneThunk() {
     return (dispatch, getState) => {
         const events = schema.selectors.drawEvents(getState());
         const id = encodeString(events);
-        dispatch({ type: "done", id });
+        location.href = location.href.replace(
+            location.pathname,
+            `/watch.html?id=${id}`
+        );
     };
 }
 

@@ -1,9 +1,8 @@
+const { reducer, selector } = require("redeclare");
 import { env } from "../constants";
-import { reducer, selector } from "redeclare";
 import { decodeString } from "./codec";
 
 const { maxSteps, width } = env;
-
 const makeInitState = () => ({
     events: [],
     frames: [] // note: this gets mutated!
@@ -21,8 +20,7 @@ export const draw = reducer(
                 events: events,
                 frames: events.reduce(addToFrame, [])
             };
-        },
-        reset: makeInitState
+        }
     },
     makeInitState()
 );
@@ -40,7 +38,7 @@ export const drawFrames = selector("draw", "transients", (
 function addToFrame(frames, event) {
     const nextFrames = [...frames];
     const { x, y, step, decay, color } = event;
-    const ttl = 2 ** (decay + 1);
+    const ttl = 1 << decay + 1;
 
     for (let i = 0; i < ttl; i++) {
         const f = (step + i) % maxSteps;

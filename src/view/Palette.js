@@ -1,6 +1,6 @@
-import h from "react-hyperscript";
-import { touchClick } from "../../util/touch-click";
-import { colorMap } from "../../constants";
+const h = require("react-hyperscript");
+import { touchClick } from "../util/touch-click";
+import { colorMap } from "../constants";
 
 const palette = {
     flexGrow: 1,

@@ -13,10 +13,6 @@ const initState = {
     colorStep: 0
 };
 export function transients(state = initState, action) {
-    if (action.type === "reset") {
-        return initState;
-    }
-
     return combineDependentReducers(state, action, {
         step,
         mode,
@@ -35,7 +31,6 @@ function step(state, action, { mode }) {
             return mode === playModes.play ? (state + 1) % maxSteps : state;
         case "draw":
             return mode === playModes.step ? (state + 1) % maxSteps : state;
-        case "done":
         case "load":
             return 0;
         case "seek":
@@ -49,7 +44,6 @@ function mode(state, { type }) {
     switch (type) {
         case "step":
         case "seek":
-        case "done":
             return playModes.step;
         case "play":
         case "load":

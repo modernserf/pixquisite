@@ -1,6 +1,6 @@
-import React from "react";
-import h from "react-hyperscript";
-import { env, colorMap } from "../../constants";
+const { Component } = require("react");
+const h = require("react-hyperscript");
+import { env, colorMap } from "../constants";
 const { width, height, resolution } = env;
 
 const canvasStyle = {
@@ -9,7 +9,7 @@ const canvasStyle = {
     backgroundColor: "white"
 };
 
-export class Grid extends React.Component {
+export class Grid extends Component {
     componentWillUpdate(nextProps) {
         drawCanvas(this._ctx, nextProps);
     }
@@ -29,7 +29,7 @@ export class Grid extends React.Component {
     }
 }
 
-export class GridWithHandlers extends React.Component {
+export class GridWithHandlers extends Component {
     constructor() {
         super();
         this.state = {

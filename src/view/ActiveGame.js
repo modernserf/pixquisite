@@ -1,9 +1,9 @@
-import h from "react-hyperscript";
-import { connect } from "../../store";
-import { GridWithHandlers } from "../Grid";
-import { Palette } from "../Palette";
-import { env, playModes } from "../../constants";
-import { touchClick } from "../../util/touch-click";
+const h = require("react-hyperscript");
+import { connect } from "../store/index";
+import { GridWithHandlers } from "./Grid";
+import { Palette } from "./Palette";
+import { env, playModes } from "../constants";
+import { touchClick } from "../util/touch-click";
 
 const row = {
     display: "flex",
@@ -76,7 +76,6 @@ const SpeedScrubber = connect(["transients"], ["setSpeed"])((
             onChange: setSpeed
         }), div({ style: scrubberLabels }, [span(["fast"]), span(["slow"])])]));
 
-// TODO: should this reset on mount?
 export const ActiveGame = () =>
     div([
         div({ style: gridWrap }, [h(GridController), h(PaletteController)]),

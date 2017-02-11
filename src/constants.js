@@ -4,8 +4,6 @@ export const localStorageKey = "pixquisite-v5";
 
 export const playModes = createEnum(["play", "step"]);
 
-export const selectors = createEnum(["play", "draw", "route"]);
-
 export const env = {
     width: 16,
     height: 16,

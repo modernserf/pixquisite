@@ -1,6 +1,5 @@
-dist/
-build/
 .DS_Store
+public/*.js
 
 # Logs
 logs
