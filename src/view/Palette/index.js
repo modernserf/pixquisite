@@ -1,4 +1,4 @@
-import React from "react";
+import h from "react-hyperscript";
 import { touchClick } from "../../util/touch-click";
 import { colorMap } from "../../constants";
 
@@ -18,18 +18,29 @@ const paletteButton = {
 };
 
 const fillStyle = (a, [r, g, b]) => `rgba(${r},${g},${b},${a})`;
-
+const m = (a, b) => Object.assign({}, a, b);
 const colorList = Object
     .keys(colorMap)
     .map(id => ({ id, value: colorMap[id] }));
 
 export function Palette({ color, colorStep, setColor }) {
-    const colorCells = colorList.map(({ id, value }) => (
-        <button key={id} type="button" style={Object.assign({}, paletteButton, {
-                backgroundColor: fillStyle(1, value[colorStep % value.length]),
-                border: id === color ? "4px solid black" : "none"
-            })} {...touchClick(() => setColor(id))} />
+    const colorCells = colorList.map(({ id, value }) => h(
+        "button",
+        m(
+            {
+                key: id,
+                type: "button",
+                style: m(paletteButton, {
+                    backgroundColor: fillStyle(
+                        1,
+                        value[colorStep % value.length]
+                    ),
+                    border: id === color ? "4px solid black" : "none"
+                })
+            },
+            touchClick(() => setColor(id))
+        )
     ));
 
-    return <div style={palette}>{colorCells}</div>;
+    return h("div", { style: palette }, [colorCells]);
 }

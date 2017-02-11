@@ -1,4 +1,5 @@
 import React from "react";
+import h from "react-hyperscript";
 import { env, colorMap } from "../../constants";
 const { width, height, resolution } = env;
 
@@ -19,14 +20,12 @@ export class Grid extends React.Component {
         this._ctx = el.getContext("2d");
     }
     render() {
-        return (
-            <canvas
-                ref={el => this.setContext(el)}
-                style={canvasStyle}
-                width={width * resolution}
-                height={height * resolution}
-            />
-        );
+        return h("canvas", {
+            ref: el => this.setContext(el),
+            style: canvasStyle,
+            width: width * resolution,
+            height: height * resolution
+        });
     }
 }
 
@@ -86,19 +85,13 @@ export class GridWithHandlers extends React.Component {
             onTouchStart: e => this.onDrawStart(e),
             onTouchEnd: e => this.onDrawEnd(e),
             onTouchMove: e => this.onDrawMove(e),
-            onTouchCancel: e => this.onDrawEnd(e)
+            onTouchCancel: e => this.onDrawEnd(e),
+            ref: el => {
+                this._el = el;
+            }
         };
 
-        return (
-            <div
-                {...handlers}
-                ref={el => {
-                    this._el = el;
-                }}
-            >
-                <Grid {...this.props} />
-            </div>
-        );
+        return h("div", handlers, [h(Grid, this.props)]);
     }
 }
 

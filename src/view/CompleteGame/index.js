@@ -1,4 +1,5 @@
 import React from "react";
+import h from "react-hyperscript";
 import { connect } from "../../store";
 import { Grid } from "../Grid";
 
@@ -9,28 +10,21 @@ const gridContainer = {
     alignItems: "center"
 };
 
-// selectT(state).colorStep, selectDraw, (colorStep, drawState) => Object.assign({}, drawState, { colorStep }))
-
-const GridController = connect(["grid"], {})(({ grid }) => <Grid {...grid} />);
+const GridController = connect(["grid"], {})(({ grid }) => h(Grid, grid));
 
 export const CompleteGame = connect(["route"], ["load", "reset"])(
     class CompleteGame extends React.Component {
         componentWillMount() {
             const { route: { path: [, gameID] }, load } = this.props;
-            // TODO: pure selector
             load(gameID);
         }
         render() {
             const { reset } = this.props;
-            return (
-                <div style={gridContainer}>
-                    <GridController />
-                    <p>You can share this link.</p>
-                    <button type="button" onClick={() => reset()}>
-                        Play Again
-                    </button>
-                </div>
-            );
+            return h("div", { style: gridContainer }, [
+                h(GridController),
+                h("p", ["You can share this link"]),
+                h("button", { type: "button", onClick: reset }, ["Play Again"])
+            ]);
         }
     }
 );

@@ -1,15 +1,13 @@
-import React from "react";
+import h from "react-hyperscript";
 import { Provider, connect } from "react-redux";
-import { LinkProvider } from "redux-antirouter";
 
 import "./reset.css";
 import "./style.css";
-import { Home } from "./Home";
+import "./home.css";
 import { ActiveGame } from "./ActiveGame";
 import { CompleteGame } from "./CompleteGame";
 
 const routes = [
-    { route: undefined, component: Home },
     { route: "play", component: ActiveGame },
     { route: "view", component: CompleteGame }
 ];
@@ -17,18 +15,9 @@ const routes = [
 const Router = connect(state => state.route)(({ path }) => {
     const route = path[0];
     const Component = routes.find(r => r.route === route).component;
-    return <Component />;
+    return h(Component);
 });
 
-export default function App(store, rootReducer) {
-    return (
-        <Provider store={store}>
-            <LinkProvider
-                selectRoute={state => state.route}
-                rootReducer={rootReducer}
-            >
-                <Router />
-            </LinkProvider>
-        </Provider>
-    );
+export default function App(store) {
+    return h(Provider, { store }, [h(Router)]);
 }
