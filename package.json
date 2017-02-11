@@ -24,26 +24,19 @@
     "watchify": "^3.9.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.9.1",
     "base64-js": "^1.1.2",
-    "history": "^4.5.1",
+    "preact": "^7.2.0",
+    "preact-redux": "^2.0.0",
     "prettier": "^0.14.1",
-    "react": "^15.2.1",
-    "react-dom": "^15.2.1",
-    "react-hyperscript": "^3.0.0",
-    "react-redux": "^4.4.5",
     "redeclare": "^0.2.0",
     "redux": "^3.3.1",
-    "redux-antirouter": "^1.2.0",
-    "redux-saga": "^0.14.3",
     "redux-thunk": "^2.2.0",
-    "reselect": "^2.0.3",
-    "shortid": "^2.2.4"
+    "reselect": "^2.0.3"
   },
   "scripts": {
     "build": "browserify -t rollupify src/play.js > public/play.js && browserify -t rollupify src/watch.js > public/watch.js",
     "watch": "watchify -t rollupify src/play.js -o public/play.js  -dv & watchify -t rollupify src/watch.js -o public/watch.js  -dv",
-    "serve": "ecstatic public -p 3000",
+    "serve": "ecstatic public -p 3000 --cache 0",
     "start": "npm run serve & npm run watch",
     "deploy": ". deploy.sh",
     "lint": "eslint src/"

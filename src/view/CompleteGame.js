@@ -1,4 +1,4 @@
-const h = require("react-hyperscript");
+const { h } = require("preact");
 import { connect } from "../store/index";
 import { Grid } from "./Grid";
 

@@ -1,4 +1,4 @@
-const DOM = require("react-dom");
+const { render } = require("preact");
 const { createStore, applyMiddleware, compose } = require("redux");
 const { default: thunkMiddleware } = require("redux-thunk");
 import { schema, runTicks } from "./store/index";
@@ -20,6 +20,6 @@ export default function(onMount) {
     runTicks(store);
 
     document.addEventListener("DOMContentLoaded", () => {
-        DOM.render(onMount(store), document.getElementById("app"));
+        render(onMount(store), document.getElementById("app"));
     });
 }

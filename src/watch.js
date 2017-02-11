@@ -1,5 +1,5 @@
-const h = require("react-hyperscript");
-const { Provider } = require("react-redux");
+const { h } = require("preact");
+const { Provider } = require("preact-redux");
 import init from "./init";
 import { CompleteGame } from "./view/CompleteGame";
 

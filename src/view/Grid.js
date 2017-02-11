@@ -1,5 +1,4 @@
-const { Component } = require("react");
-const h = require("react-hyperscript");
+const { h, Component } = require("preact");
 import { env, colorMap } from "../constants";
 const { width, height, resolution } = env;
 
@@ -36,16 +35,15 @@ export class GridWithHandlers extends Component {
             mousedown: false,
             position: { top: 0, left: 0 }
         };
-        this.setClientRect = this.setClientRect.bind(this);
+        this.setClientRect = () => {
+            this.setState({ position: this._el.getBoundingClientRect() });
+        };
     }
     componentDidMount() {
         window.addEventListener("resize", this.setClientRect);
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.setClientRect);
-    }
-    setClientRect() {
-        this.setState({ position: this._el.getBoundingClientRect() });
     }
     onDrawStart(e) {
         e.preventDefault();
@@ -67,16 +65,14 @@ export class GridWithHandlers extends Component {
         const { draw } = this.props;
         const { top, left } = this.state.position;
 
-        const event = e.nativeEvent.targetTouches
-            ? e.nativeEvent.targetTouches[0]
-            : e;
+        const event = e.targetTouches ? e.targetTouches[0] : e;
 
         draw(
             Math.floor((event.clientX - left) / resolution),
             Math.floor((event.clientY - top) / resolution)
         );
     }
-    render() {
+    render(props) {
         const handlers = {
             onMouseDown: e => this.onDrawStart(e),
             onMouseUp: e => this.onDrawEnd(e),
@@ -91,7 +87,7 @@ export class GridWithHandlers extends Component {
             }
         };
 
-        return h("div", handlers, [h(Grid, this.props)]);
+        return h("div", handlers, [h(Grid, props)]);
     }
 }
 

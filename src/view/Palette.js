@@ -1,4 +1,4 @@
-const h = require("react-hyperscript");
+const { h } = require("preact");
 import { touchClick } from "../util/touch-click";
 import { colorMap } from "../constants";
 

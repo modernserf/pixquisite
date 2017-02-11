@@ -1,5 +1,5 @@
 const { createConnector, createSchema, selector } = require("redeclare");
-const { connect: reduxConnect } = require("react-redux");
+const { connect: reduxConnect } = require("preact-redux");
 import { draw, drawEvents, drawFrames } from "./draw";
 import { transients } from "./transient";
 import { encodeString } from "./codec";

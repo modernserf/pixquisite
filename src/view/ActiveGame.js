@@ -1,4 +1,4 @@
-const h = require("react-hyperscript");
+const { h } = require("preact");
 import { connect } from "../store/index";
 import { GridWithHandlers } from "./Grid";
 import { Palette } from "./Palette";
@@ -25,8 +25,9 @@ const scrubberLabels = Object.assign({}, row, {
 const { maxDecay, maxSteps } = env;
 
 const m = (a, b) => Object.assign({}, a, b);
-const div = (props, children) => h("div", props, children);
-const span = (props, children) => h("span", props, children);
+const div = (props, children) =>
+    children ? h("div", props, children) : h("div", {}, props);
+const span = children => h("span", {}, children);
 const button = (props, children) =>
     h("button", m({ type: "button" }, props), children);
 const range = props => h("input", m(props, {
