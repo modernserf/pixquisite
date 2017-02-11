@@ -1,9 +1,9 @@
 import "babel-polyfill";
 import DOM from "react-dom";
 import { createStore, applyMiddleware, compose } from "redux";
+import thunkMiddleware from "redux-thunk";
 import { createRouterMiddleware } from "redux-antirouter";
-import sagaMiddleware from "redux-saga";
-import { schema, sagas } from "./store";
+import { schema, runTicks } from "./store";
 import view from "./view";
 
 const routeMiddleware = createRouterMiddleware({
@@ -15,15 +15,16 @@ const composeEnhancers = process.env.NODE_ENV !== "production" &&
     typeof window === "object" &&
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-            actionsBlacklist: ["tick", "EFFECT_RESOLVED", "EFFECT_TRIGGERED"]
-            // Specify extension’s options like name, actionsBlacklist, actionsCreators or immutablejs support if needed
+            actionsBlacklist: ["tick"]
         })
     : compose;
 
 const store = createStore(
     schema.reducer,
-    composeEnhancers(applyMiddleware(routeMiddleware, sagaMiddleware(...sagas)))
+    composeEnhancers(applyMiddleware(routeMiddleware, thunkMiddleware))
 );
+
+runTicks(store);
 
 document.addEventListener("DOMContentLoaded", () => {
     DOM.render(view(store, schema.reducer), document.getElementById("app"));

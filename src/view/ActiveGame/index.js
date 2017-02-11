@@ -24,9 +24,9 @@ const scrubberLabels = Object.assign({}, row, {
 
 const { maxDecay, maxSteps } = env;
 
-const GridController = connect(["grid"], ["draw__request"])((
-    { grid, draw__request }
-) => <GridWithHandlers {...grid} draw={draw__request} />);
+const GridController = connect(["grid"], ["draw"])(({ grid, draw }) => (
+    <GridWithHandlers {...grid} draw={draw} />
+));
 
 const PaletteController = connect(["transients"], ["setColor"])((
     { transients: { color, colorStep }, setColor }
@@ -67,12 +67,12 @@ function Transport() {
     );
 }
 
-const Rounds = connect([], ["done__request"])(function Rounds(
-    { done__request }
+const Rounds = connect([], ["done"])(function Rounds(
+    { done }
 ) {
     return (
         <div>
-            <button onClick={done__request}>Done</button>
+            <button onClick={done}>Done</button>
         </div>
     );
 });

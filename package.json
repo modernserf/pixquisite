@@ -30,9 +30,9 @@
     "react-redux": "^4.4.5",
     "redeclare": "^0.2.0",
     "redux": "^3.3.1",
-    "redux-action-schema": "^0.7.0",
     "redux-antirouter": "^1.2.0",
-    "redux-saga": "^0.8.2",
+    "redux-saga": "^0.14.3",
+    "redux-thunk": "^2.2.0",
     "reselect": "^2.0.3",
     "shortid": "^2.2.4"
   },
