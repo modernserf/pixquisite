@@ -1,4 +1,4 @@
-const { h } = require("preact");
+import { h } from "preact";
 import { connect } from "../store/index";
 import { GridWithHandlers } from "./Grid";
 import { Palette } from "./Palette";

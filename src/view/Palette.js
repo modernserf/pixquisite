@@ -1,4 +1,4 @@
-const { h } = require("preact");
+import { h } from "preact";
 import { touchClick } from "../util/touch-click";
 import { colorMap } from "../constants";
 

@@ -1,4 +1,4 @@
-const base64 = require("base64-js");
+import base64 from "base64-js";
 import { colorMap } from "../constants";
 
 // encode/decode the animation in a base64 binary string

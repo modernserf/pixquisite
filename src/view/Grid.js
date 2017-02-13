@@ -1,4 +1,4 @@
-const { h, Component } = require("preact");
+import { h, Component } from "preact";
 import { env, colorMap } from "../constants";
 const { width, height, resolution } = env;
 

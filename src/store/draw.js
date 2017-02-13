@@ -1,4 +1,4 @@
-const { reducer, selector } = require("redeclare");
+import { reducer, selector } from "redeclare";
 import { env } from "../constants";
 import { decodeString } from "./codec";
 
